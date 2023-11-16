@@ -1,89 +1,91 @@
 <template>
-  <a-table :columns="columns" :data-source="dataSource" bordered>
-    <template #bodyCell="{ column, text, record }">
-      <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
-        <div>
-          <a-input
-            v-if="editableData[record.key]"
-            v-model:value="editableData[record.key][column.dataIndex]"
-            style="margin: -5px 0"
-          />
-          <template v-else>
-            {{ text }}
-          </template>
-        </div>
-      </template>
-      <template v-else-if="column.dataIndex === 'operation'">
-        <div class="editable-row-operations">
-          <span v-if="editableData[record.key]">
-            <a-typography-link @click="save(record.key)"
-              >Save</a-typography-link
-            >
-            <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-              <a>Cancel</a>
-            </a-popconfirm>
-          </span>
-          <span v-else>
-            <a @click="edit(record.key)">Edit</a>
-          </span>
-        </div>
-      </template>
+  <v-card>
+    <v-card-title>
+      자유 게시판
+      <v-spacer></v-spacer>
+      <!-- <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field> -->
+      <SearchBar
+        @search-event="getSearchArticles"
+        :options="[
+          { value: 'nickname', text: '작성자' },
+          { value: 'title', text: '제목' },
+          { value: 'subject', text: '내용' },
+        ]"
+      ></SearchBar>
+    </v-card-title>
+  </v-card>
+
+  <v-data-table
+    v-model:page="page"
+    :headers="headers"
+    :items="articles"
+    :items-per-page="itemsPerPage"
+    :loading="loading"
+  >
+    <template v-slot:bottom>
+      <div class="text-center pt-2">
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          :total-visible="totalVisible"
+        ></v-pagination>
+      </div>
     </template>
-  </a-table>
+  </v-data-table>
 </template>
 <script setup>
-import { cloneDeep } from "lodash-es";
-import { reactive, ref } from "vue";
-const columns = [
-  {
-    title: "name",
-    dataIndex: "name",
-    width: "25%",
-  },
-  {
-    title: "age",
-    dataIndex: "age",
-    width: "15%",
-  },
-  {
-    title: "address",
-    dataIndex: "address",
-    width: "40%",
-  },
-  {
-    title: "operation",
-    dataIndex: "operation",
-  },
-];
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i.toString(),
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
-  });
-}
-const dataSource = ref(data);
-const editableData = reactive({});
-const edit = (key) => {
-  editableData[key] = cloneDeep(
-    dataSource.value.filter((item) => key === item.key)[0]
-  );
+// import PageNavigation from "../../components/navigation/PageNavigation.vue";
+import SearchBar from "../../components/searchbar/SearchBar.vue";
+import { RouterLink, useRouter } from "vue-router";
+import { ref, computed } from "vue";
+//1.store 객체 얻어오기
+import { useBoardStore } from "../../store/board";
+const boardStore = useBoardStore();
+
+//2.반응형 데이터 연결하기
+const articles = computed(() => boardStore.articles);
+
+const params = ref({
+  key: "", //조건 검색 시 컬럼명
+  word: "", //해당 컬럼에 일치하는 데이터
+  // pgno: 1, //조회할 페이지 번호
+  // spp: 20, //한번에 얻어올 게시글 개수
+});
+
+//목록 조회
+boardStore.getArticles(params.value, "free");
+
+const getSearchArticles = (searchKeyword) => {
+  console.log("BoardList의 조건 검색 메소드 호출:", searchKeyword);
+
+  params.value.key = searchKeyword.key;
+  params.value.word = searchKeyword.word;
+  // params.value.pgno = 1;
+
+  //목록 조회 필요
+  boardStore.getArticles(params.value, "free");
 };
-const save = (key) => {
-  Object.assign(
-    dataSource.value.filter((item) => key === item.key)[0],
-    editableData[key]
-  );
-  delete editableData[key];
-};
-const cancel = (key) => {
-  delete editableData[key];
-};
+
+const page = ref(1);
+const itemsPerPage = ref(10);
+const totalVisible = ref(8);
+
+const headers = ref([
+  { title: "No", sortable: false, key: "boardId" },
+  { title: "작성자", sortable: false, key: "nickName" },
+  { title: "제목", sortable: false, key: "title" },
+  { title: "조회수", sortable: false, key: "hit" },
+  { title: "등록일", sortable: false, key: "registerDate" },
+  { title: "좋아요수", sortable: false, key: "totalLike" },
+]);
+
+const pageCount = computed(() =>
+  Math.ceil(articles.value.length / itemsPerPage.value)
+);
 </script>
-<style scoped>
-.editable-row-operations a {
-  margin-right: 8px;
-}
-</style>
