@@ -52,11 +52,6 @@ const router = createRouter({
           name: "user-login",
           component: () => import("@/components/users/UserLogin.vue"),
         },
-        {
-          path: "/gologin",
-          name: "go-user-login",
-          component: () => import("@/components/users/GoUserLogin.vue"),
-        },
       ],
     },
   ],
