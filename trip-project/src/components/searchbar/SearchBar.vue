@@ -17,12 +17,16 @@ const searchInfo = ref({
           {{ option.text }}
         </option>
       </select>
-      <input
+
+      <v-text-field
         type="text"
         v-model="searchInfo.word"
         @input="$emit('searchEvent', searchInfo)"
+        append-icon="mdi-magnify"
+        single-line
+        hide-details
       />
-      <button>검색</button>
+      <!-- <button>검색</button> -->
     </form>
   </div>
 </template>

@@ -19,25 +19,26 @@
         ]"
       ></SearchBar>
     </v-card-title>
-  </v-card>
 
-  <v-data-table
-    v-model:page="page"
-    :headers="headers"
-    :items="articles"
-    :items-per-page="itemsPerPage"
-    :loading="loading"
-  >
-    <template v-slot:bottom>
-      <div class="text-center pt-2">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="totalVisible"
-        ></v-pagination>
-      </div>
-    </template>
-  </v-data-table>
+    <v-data-table
+      v-model:page="page"
+      :headers="headers"
+      :items="articles"
+      :items-per-page="itemsPerPage"
+      :loading="loading"
+      loading-text="Loading... Please wait"
+    >
+      <template v-slot:bottom>
+        <div class="text-center pt-2">
+          <v-pagination
+            v-model="page"
+            :length="pageCount"
+            :total-visible="totalVisible"
+          ></v-pagination>
+        </div>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 <script setup>
 // import PageNavigation from "../../components/navigation/PageNavigation.vue";
@@ -47,6 +48,7 @@ import { ref, computed } from "vue";
 //1.store 객체 얻어오기
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
+const loading = ref(true);
 
 //2.반응형 데이터 연결하기
 const articles = computed(() => boardStore.articles);
@@ -54,11 +56,10 @@ const articles = computed(() => boardStore.articles);
 const params = ref({
   key: "", //조건 검색 시 컬럼명
   word: "", //해당 컬럼에 일치하는 데이터
-  // pgno: 1, //조회할 페이지 번호
-  // spp: 20, //한번에 얻어올 게시글 개수
 });
 
 //목록 조회
+loading.value = false;
 boardStore.getArticles(params.value, "free");
 
 const getSearchArticles = (searchKeyword) => {
