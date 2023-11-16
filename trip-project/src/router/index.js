@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
+import TheUserView from "../views/TheUserView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,23 @@ const router = createRouter({
           path: "write",
           name: "board-write",
           component: () => import("@/components/boards/BoardWrite.vue"),
+        },
+      ],
+    },
+    {
+      path: "/user",
+      name: "user",
+      component: TheUserView,
+      children: [
+        {
+          path: "/login",
+          name: "user-login",
+          component: () => import("@/components/users/UserLogin.vue"),
+        },
+        {
+          path: "/gologin",
+          name: "go-user-login",
+          component: () => import("@/components/users/GoUserLogin.vue"),
         },
       ],
     },
