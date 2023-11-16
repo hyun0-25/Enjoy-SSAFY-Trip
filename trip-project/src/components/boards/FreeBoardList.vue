@@ -1,155 +1,91 @@
 <template>
-  <v-data-table-server
-    v-model:items-per-page="itemsPerPage"
+  <v-card>
+    <v-card-title>
+      자유 게시판
+      <v-spacer></v-spacer>
+      <!-- <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field> -->
+      <SearchBar
+        @search-event="getSearchArticles"
+        :options="[
+          { value: 'nickname', text: '작성자' },
+          { value: 'title', text: '제목' },
+          { value: 'subject', text: '내용' },
+        ]"
+      ></SearchBar>
+    </v-card-title>
+  </v-card>
+
+  <v-data-table
+    v-model:page="page"
     :headers="headers"
-    :items-length="totalItems"
-    :items="serverItems"
+    :items="articles"
+    :items-per-page="itemsPerPage"
     :loading="loading"
-    :search="search"
-    item-value="name"
-    @update:options="loadItems"
-  ></v-data-table-server>
+  >
+    <template v-slot:bottom>
+      <div class="text-center pt-2">
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          :total-visible="totalVisible"
+        ></v-pagination>
+      </div>
+    </template>
+  </v-data-table>
 </template>
-<script>
-const desserts = [
-  {
-    name: "Frozen Yogurt",
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    iron: "1",
-  },
-  {
-    name: "Jelly bean",
-    calories: 375,
-    fat: 0.0,
-    carbs: 94,
-    protein: 0.0,
-    iron: "0",
-  },
-  {
-    name: "KitKat",
-    calories: 518,
-    fat: 26.0,
-    carbs: 65,
-    protein: 7,
-    iron: "6",
-  },
-  {
-    name: "Eclair",
-    calories: 262,
-    fat: 16.0,
-    carbs: 23,
-    protein: 6.0,
-    iron: "7",
-  },
-  {
-    name: "Gingerbread",
-    calories: 356,
-    fat: 16.0,
-    carbs: 49,
-    protein: 3.9,
-    iron: "16",
-  },
-  {
-    name: "Ice cream sandwich",
-    calories: 237,
-    fat: 9.0,
-    carbs: 37,
-    protein: 4.3,
-    iron: "1",
-  },
-  {
-    name: "Lollipop",
-    calories: 392,
-    fat: 0.2,
-    carbs: 98,
-    protein: 0,
-    iron: "2",
-  },
-  {
-    name: "Cupcake",
-    calories: 305,
-    fat: 3.7,
-    carbs: 67,
-    protein: 4.3,
-    iron: "8",
-  },
-  {
-    name: "Honeycomb",
-    calories: 408,
-    fat: 3.2,
-    carbs: 87,
-    protein: 6.5,
-    iron: "45",
-  },
-  {
-    name: "Donut",
-    calories: 452,
-    fat: 25.0,
-    carbs: 51,
-    protein: 4.9,
-    iron: "22",
-  },
-];
+<script setup>
+// import PageNavigation from "../../components/navigation/PageNavigation.vue";
+import SearchBar from "../../components/searchbar/SearchBar.vue";
+import { RouterLink, useRouter } from "vue-router";
+import { ref, computed } from "vue";
+//1.store 객체 얻어오기
+import { useBoardStore } from "../../store/board";
+const boardStore = useBoardStore();
 
-const FakeAPI = {
-  async fetch({ page, itemsPerPage, sortBy }) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const items = desserts.slice();
+//2.반응형 데이터 연결하기
+const articles = computed(() => boardStore.articles);
 
-        if (sortBy.length) {
-          const sortKey = sortBy[0].key;
-          const sortOrder = sortBy[0].order;
-          items.sort((a, b) => {
-            const aValue = a[sortKey];
-            const bValue = b[sortKey];
-            return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
-          });
-        }
+const params = ref({
+  key: "", //조건 검색 시 컬럼명
+  word: "", //해당 컬럼에 일치하는 데이터
+  // pgno: 1, //조회할 페이지 번호
+  // spp: 20, //한번에 얻어올 게시글 개수
+});
 
-        const paginated = items.slice(start, end);
+//목록 조회
+boardStore.getArticles(params.value, "free");
 
-        resolve({ items: paginated, total: items.length });
-      }, 500);
-    });
-  },
+const getSearchArticles = (searchKeyword) => {
+  console.log("BoardList의 조건 검색 메소드 호출:", searchKeyword);
+
+  params.value.key = searchKeyword.key;
+  params.value.word = searchKeyword.word;
+  // params.value.pgno = 1;
+
+  //목록 조회 필요
+  boardStore.getArticles(params.value, "free");
 };
 
-export default {
-  data: () => ({
-    itemsPerPage: 5,
-    headers: [
-      {
-        title: "Dessert (100g serving)",
-        align: "start",
-        sortable: false,
-        key: "name",
-      },
-      { title: "Calories", key: "calories", align: "end" },
-      { title: "Fat (g)", key: "fat", align: "end" },
-      { title: "Carbs (g)", key: "carbs", align: "end" },
-      { title: "Protein (g)", key: "protein", align: "end" },
-      { title: "Iron (%)", key: "iron", align: "end" },
-    ],
-    search: "",
-    serverItems: [],
-    loading: true,
-    totalItems: 0,
-  }),
-  methods: {
-    loadItems({ page, itemsPerPage, sortBy }) {
-      this.loading = true;
-      FakeAPI.fetch({ page, itemsPerPage, sortBy }).then(({ items, total }) => {
-        this.serverItems = items;
-        this.totalItems = total;
-        this.loading = false;
-      });
-    },
-  },
-};
+const page = ref(1);
+const itemsPerPage = ref(10);
+const totalVisible = ref(8);
+
+const headers = ref([
+  { title: "No", sortable: false, key: "boardId" },
+  { title: "작성자", sortable: false, key: "nickName" },
+  { title: "제목", sortable: false, key: "title" },
+  { title: "조회수", sortable: false, key: "hit" },
+  { title: "등록일", sortable: false, key: "registerDate" },
+  { title: "좋아요수", sortable: false, key: "totalLike" },
+]);
+
+const pageCount = computed(() =>
+  Math.ceil(articles.value.length / itemsPerPage.value)
+);
 </script>
