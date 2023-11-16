@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useMenuStore } from "@/store/menu";
 import { storeToRefs } from "pinia";
 import VfUserRegister from "../users/VfUserRegister.vue";
@@ -6,13 +7,8 @@ import VfUserRegister from "../users/VfUserRegister.vue";
 const menuStore = useMenuStore();
 const { menuList } = storeToRefs(menuStore);
 
-// const logout = () => {
-//   console.log("로그아웃 요청");
-//   changeMenuState();
-// };
-const OpenLogin = () => {
-  window.open("/go-user-login", "_blank", "window=480 height=720");
-};
+// 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
+const dialog = ref(false);
 </script>
 
 <template>
@@ -45,8 +41,13 @@ const OpenLogin = () => {
           </li>
           <li><a href="">마이페이지</a></li>
           <li>
-            <v-dialog width="600">
-              <VfUserRegister>로그인</VfUserRegister>
+            <v-dialog v-model="dialog" width="600">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-on="on" v-bind="attrs" @click="dialog = !dialog"
+                  >로그인</v-btn
+                >
+              </template>
+              <VfUserRegister v-if="dialog"></VfUserRegister>
             </v-dialog>
           </li>
         </ul>

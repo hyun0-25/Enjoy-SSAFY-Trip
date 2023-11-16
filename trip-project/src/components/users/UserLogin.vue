@@ -32,33 +32,28 @@
 </script>
 
 <template>
+  <div><h3>로그인</h3></div>
   <div>
     <div>
-      <ul class="">
-        <li><a href="#0">로그인</a></li>
-        <li><a href="#0">회원가입</a></li>
-      </ul>
-      <div>
-        <form>
-          <p>
-            <label for="signin-id">아이디</label>
-            <input type="signin-id" placeholder="아이디" />
-          </p>
-          <p>
-            <label for="singin-password"></label>
-            <input type="password" placeholder="비밀번호" />
-          </p>
-          <p>
-            <input type="checkbox" id="remember-me" checked />
-            <label for="remember-me">아이디 기억하기</label>
-          </p>
-          <p>
-            <input type="submit" value="로그인" />
-          </p>
-        </form>
-      </div>
-      <div></div>
+      <form>
+        <p>
+          <label for="signin-id"></label>
+          <input type="signin-id" placeholder="아이디" />
+        </p>
+        <p>
+          <label for="singin-password"></label>
+          <input type="password" placeholder="비밀번호" />
+        </p>
+        <p>
+          <input type="checkbox" id="remember-me" checked />
+          <label for="remember-me">아이디 기억하기</label>
+        </p>
+        <p>
+          <input type="submit" value="로그인" />
+        </p>
+      </form>
     </div>
+    <div></div>
   </div>
 </template>
 

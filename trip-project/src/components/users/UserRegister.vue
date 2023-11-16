@@ -1,10 +1,10 @@
 <script setup></script>
 
 <template>
-  <div>회원가입</div>
+  <div><h3>회원가입</h3></div>
   <form>
     <p>
-      <label for="signin-id">아이디</label>
+      <label for="signin-id"></label>
       <input type="text" placeholder="아이디" />
     </p>
     <p>
