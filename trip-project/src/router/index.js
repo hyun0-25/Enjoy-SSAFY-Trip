@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
 import TheUserView from "../views/TheUserView.vue";
+import TheKakaoMap from "../views/TheKakaoMap.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,11 @@ const router = createRouter({
           component: () => import("@/components/users/UserLogin.vue"),
         },
       ],
+    },
+    {
+      path: "/map",
+      name: "map",
+      component: TheKakaoMap,
     },
   ],
 });

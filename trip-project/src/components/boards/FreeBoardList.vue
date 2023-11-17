@@ -59,8 +59,8 @@ const params = ref({
 });
 
 //목록 조회
-loading.value = false;
 boardStore.getArticles(params.value, "free");
+loading.value = false;
 
 const getSearchArticles = (searchKeyword) => {
   console.log("BoardList의 조건 검색 메소드 호출:", searchKeyword);
