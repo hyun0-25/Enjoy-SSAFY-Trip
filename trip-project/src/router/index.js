@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
 import TheUserView from "../views/TheUserView.vue";
+<<<<<<< HEAD
 import TheKakaoMap from "../views/TheKakaoMap.vue";
+=======
+import { useAuthStore } from "@/store/auth";
+>>>>>>> d9b526a84b5550c26748396ca3f7ab1e101a1563
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +57,11 @@ const router = createRouter({
           name: "user-login",
           component: () => import("@/components/users/UserLogin.vue"),
         },
+        {
+          path: "/mypage",
+          name: "user-mypage",
+          component: () => import("@/components/users/UserMyPage.vue"),
+        },
       ],
     },
     {
@@ -61,6 +70,30 @@ const router = createRouter({
       component: TheKakaoMap,
     },
   ],
+});
+
+// -----토큰----
+//로그인, 또는 관리자 권한이 필요한 경우 제어 ( next()의 경우, 원래 이동하려 했던 라우트로 이동 )
+router.beforeEach((to, from, next) => {
+  //to:가려는 곳, from : 현재 화면
+  const authStore = useAuthStore();
+  //로그인 필요
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!authStore.token) {
+      //토큰이 없는 경우, 로그인 필요.
+      alert("로그인 권한 필요");
+      next({ path: "/login" }); // 인증되지 않은 경우, 로그인 페이지로 리다이렉트
+    } else {
+      //관리자 권한 필요
+      if (to.matched.some((record) => record.meta.requiresAdmin)) {
+        // 관리자가 아닌 경우 홈으로
+        if (authStore.user.role !== "admin") {
+          alert("관리자 권한 필요");
+          next({ path: "/" });
+        } else next(); // 관리자인 경우, 해당 경로로 이동
+      } else next(); // 인증된 경우 해당 경로로 이동
+    }
+  } else next(); // 인증이 필요하지 않은 경우 해당 경로로 이동
 });
 
 export default router;
