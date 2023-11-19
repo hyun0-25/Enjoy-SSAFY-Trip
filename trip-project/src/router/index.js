@@ -1,11 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
 import TheUserView from "../views/TheUserView.vue";
-<<<<<<< HEAD
 import TheKakaoMap from "../views/TheKakaoMap.vue";
-=======
 import { useAuthStore } from "@/store/auth";
->>>>>>> d9b526a84b5550c26748396ca3f7ab1e101a1563
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +41,20 @@ const router = createRouter({
           path: "write",
           name: "board-write",
           component: () => import("@/components/boards/BoardWrite.vue"),
+        },
+        {
+          path: "detail/:boardId",
+          name: "board-detail",
+          component: () => import("@/components/boards/BoardDetail.vue"),
+        },
+        //BoardModify
+        {
+          path: "modify/:boardId",
+          name: "board-modify",
+          component: () => import("@/components/boards/BoardModify.vue"),
+          // meta: { requiresAuth: true },
+          //관리자 권한 또한 필요한 경우
+          // meta: { requiresAuth: true, requiresAdmin: true },
         },
       ],
     },

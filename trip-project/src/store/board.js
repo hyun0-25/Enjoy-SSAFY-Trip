@@ -5,7 +5,6 @@ import axios from "axios";
 export const useBoardStore = defineStore("board", () => {
   /* =======게시글 목록 Start========== */
   const articles = ref([]); //목록 데이터
-  const totalPageCount = ref(0); //전체 페이지 개수
   /*
   Response
 {
@@ -32,9 +31,9 @@ export const useBoardStore = defineStore("board", () => {
 
   const article = ref({});
 
-  const getArticle = async (articleNo) => {
-    const { data } = await axios.get(`/api/board/${articleNo}`);
-    console.log(`getArticle(${articleNo}) 요청 응답: `, data);
+  const getArticle = async (boardId) => {
+    const { data } = await axios.get(`/api/board/${boardId}`);
+    console.log(`getArticle(${boardId}) 요청 응답: `, data);
     article.value = data;
   };
   /* =======게시글 상세 End========== */
@@ -54,15 +53,14 @@ export const useBoardStore = defineStore("board", () => {
   /* =======게시글 수정 End========== */
 
   /* =======게시글 삭제 Start========== */
-  const deleteArticle = async (articleNo) => {
-    console.log(`deleteArticle(${articleNo}) 요청 보냄`);
-    resolve(axios.delete(`/api/board/${articleNo}`));
+  const deleteArticle = async (boardId) => {
+    console.log(`deleteArticle(${boardId}) 요청 보냄`);
+    resolve(axios.delete(`/api/board/${boardId}`));
   };
   /* =======게시글 삭제 End========== */
 
   return {
     articles,
-    totalPageCount,
     getArticles,
     article,
     getArticle,
