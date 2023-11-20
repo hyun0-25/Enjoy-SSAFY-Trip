@@ -34,6 +34,32 @@ const cancel = async () => {
   if (!confirm("취소하시겠습니까?")) return;
   router.push({ path: "/board/notice" });
 };
+
+//파일 업로드
+// 상태 변수 정의
+const preview = ref("");
+const file = ref(null);
+
+// 메서드 정의
+const previewFile = () => {
+  const fileData = (data) => {
+    preview.value = data;
+  };
+  // console.log(file.value[0].name);
+
+  if (file.value[0]) {
+    const reader = new FileReader();
+    // reader.readAsDataURL(file.value[0]);
+    reader.readAsDataURL(file.value[0]);
+    reader.addEventListener(
+      "load",
+      function () {
+        fileData(reader.result);
+      },
+      false
+    );
+  }
+};
 </script>
 
 <template>
@@ -60,6 +86,10 @@ const cancel = async () => {
                   style="width: 730px"
                   :rules="[(v) => !!v || '내용은 필수입니다.']"
                 ></v-textarea>
+                <v-col>
+                  <img :src="preview" />
+                  <v-file-input v-model="file" @change="previewFile" />
+                </v-col>
                 <v-btn
                   width="100px"
                   style="margin-bottom: 30px"

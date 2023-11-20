@@ -115,6 +115,7 @@ public class BoardServiceImpl implements BoardService {
 		// TODO : BoardDaoImpl의 deleteArticle 호출
 		List<FileInfoDto> fileList = boardMapper.fileInfoList(boardId);
 		boardMapper.deleteFile(boardId);
+		boardMapper.deleteComment(boardId);
 		boardMapper.deleteArticle(boardId);
 		for(FileInfoDto fileInfoDto : fileList) {
 			File file = new File(File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());

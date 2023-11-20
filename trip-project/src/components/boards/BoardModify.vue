@@ -10,15 +10,20 @@ const route = useRoute();
 
 const modifyForm = ref({});
 
-//수정 정보 초기데이터 세팅
 const setModifyInfo = async () => {
-  await boardStore.getArticle(route.params.boardId);
-  modifyForm.value.boardId = boardStore.article.boardId;
-  modifyForm.value.subject = boardStore.article.subject;
-  modifyForm.value.content = boardStore.article.content;
+  //1. store의 article 데이터 세팅
+  await boardStore.getModifyArticle(
+    route.params.boardType,
+    route.params.boardId
+  );
+  //2. article 데이터를 통해 modifyForm 세팅
+  modifyForm.value = { ...boardStore.modifyarticle };
 };
+
 setModifyInfo();
+
 const form = ref(null);
+
 const modify = async () => {
   const { valid } = await form.value.validate();
   // rules 만족시
