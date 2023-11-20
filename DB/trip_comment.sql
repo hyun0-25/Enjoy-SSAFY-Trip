@@ -28,7 +28,6 @@ CREATE TABLE `comment` (
   `comment_id` int NOT NULL AUTO_INCREMENT,
   `user_id` varchar(16) DEFAULT NULL,
   `board_id` int DEFAULT NULL,
-  `board_type` enum('hot','free','notice','contest') DEFAULT NULL,
   `content` varchar(200) DEFAULT NULL,
   `register_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`),
@@ -57,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-15 17:18:41
+-- Dump completed on 2023-11-20 17:11:35

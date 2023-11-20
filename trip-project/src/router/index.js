@@ -69,6 +69,11 @@ const router = createRouter({
           component: () => import("@/components/users/UserLogin.vue"),
         },
         {
+          path: "/join",
+          name: "user-join",
+          component: () => import("@/components/users/UserRegister.vue"),
+        },
+        {
           path: "/mypage",
           name: "user-mypage",
           component: () => import("@/components/users/UserMyPage.vue"),
