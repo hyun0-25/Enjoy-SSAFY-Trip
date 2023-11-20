@@ -388,6 +388,8 @@ const addMyLocation = (info) => {
 const deleteMyLocation = (item) => {
   sample_myloc.value = sample_myloc.value.filter((e) => e !== item);
 };
+
+const addAllMyLocation = () => {};
 </script>
 
 <template>
@@ -400,7 +402,8 @@ const deleteMyLocation = (item) => {
               <!-- <v-row dense> -->
               <!-- <v-col v-for="attr in items" :key="attr.raw.contentId" cols="12"> -->
               <v-card>
-                <div class="d-flex flex-no-wrap justify-space-between">
+                <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
+                <div>
                   <v-avatar
                     class="ma-3"
                     size="150"
@@ -452,10 +455,19 @@ const deleteMyLocation = (item) => {
     <div style="width: 20%">
       <v-card class="mx-auto">
         <v-container>
+          <v-col>
+            <v-text-field
+              v-model="trip_title"
+              label="여행명"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+
           <v-virtual-scroll :items="sample_myloc" height="600">
             <template v-slot:default="{ item }">
               <v-card>
-                <div class="d-flex flex-no-wrap justify-space-between">
+                <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
+                <div>
                   <v-avatar class="ma-3" size="125" rounded="0">
                     <v-img :src="item.firstImage"></v-img>
                   </v-avatar>
@@ -481,6 +493,9 @@ const deleteMyLocation = (item) => {
               </v-card>
             </template>
           </v-virtual-scroll>
+          <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
+            다음
+          </v-btn>
         </v-container>
       </v-card>
     </div>
