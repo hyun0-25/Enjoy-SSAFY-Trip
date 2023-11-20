@@ -19,10 +19,10 @@ public class BoardCommentDto {
 	private int commentId;
 	@ApiModelProperty(value = "작성자 아이디")
 	private String userId;
+	@ApiModelProperty(value = "작성자 닉네임")
+	private String nickName;
 	@ApiModelProperty(value = "게시판 아이디")
 	private int boardId;
-	@ApiModelProperty(value = "게시판 종류")
-	private String boardType;
 	@ApiModelProperty(value = "글내용")
 	private String content;
 	@ApiModelProperty(value = "작성일")	

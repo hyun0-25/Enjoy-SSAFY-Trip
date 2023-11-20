@@ -23,7 +23,6 @@ export const useBoardStore = defineStore("board", () => {
     });
     console.log("getArticles(params) 응답데이터:", data);
     articles.value = data.articles;
-    // totalPageCount.value = data.totalPageCount;
   };
   /* =======게시글 목록 End========== */
 
@@ -31,9 +30,9 @@ export const useBoardStore = defineStore("board", () => {
 
   const article = ref({});
 
-  const getArticle = async (boardId) => {
-    const { data } = await axios.get(`/api/board/${boardId}`);
-    console.log(`getArticle(${boardId}) 요청 응답: `, data);
+  const getArticle = async (boardType, boardId) => {
+    const { data } = await axios.get(`/api/board/${boardType}/${boardId}`);
+    console.log(`getArticle(${boardType}, ${boardId}) 요청 응답: `, data);
     article.value = data;
   };
   /* =======게시글 상세 End========== */
@@ -45,17 +44,32 @@ export const useBoardStore = defineStore("board", () => {
   };
   /* =======게시글 등록 End========== */
 
+  /* =======게시글 수정 정보 Start========== */
+  const modifyarticle = ref({});
+
+  const getModifyArticle = async (boardType, boardId) => {
+    const { data } = await axios.get(
+      `/api/board/modify/${boardType}/${boardId}`
+    );
+    console.log(`getModifyArticle(${boardType}, ${boardId}) 요청 응답: `, data);
+    modifyarticle.value = data;
+  };
+  /* =======게시글 정보 End========== */
+
   /* =======게시글 수정 Start========== */
   const modifyArticle = async (modifyForm) => {
     console.log("modifyArticle() 요청 데이터:", modifyArticle);
-    return await axios.put(`/api/board`, modifyForm);
+    return await axios.put(
+      `/api/board/${modifyForm.boardType}/${modifyForm.boardId}`,
+      modifyForm
+    );
   };
   /* =======게시글 수정 End========== */
 
   /* =======게시글 삭제 Start========== */
-  const deleteArticle = async (boardId) => {
-    console.log(`deleteArticle(${boardId}) 요청 보냄`);
-    resolve(axios.delete(`/api/board/${boardId}`));
+  const deleteArticle = async (boardType, boardId) => {
+    console.log(`deleteArticle(${boardType}, ${boardId}) 요청 보냄`);
+    await axios.delete(`/api/board/${boardType}/${boardId}`);
   };
   /* =======게시글 삭제 End========== */
 
@@ -67,5 +81,7 @@ export const useBoardStore = defineStore("board", () => {
     writeArticle,
     modifyArticle,
     deleteArticle,
+    getModifyArticle,
+    modifyarticle,
   };
 });

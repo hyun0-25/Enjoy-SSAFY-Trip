@@ -56,4 +56,6 @@ public interface BoardMapper {
 	void addTotalLike(int boardId) throws Exception;
 	
 	void deleteTotalLike(int boardId) throws Exception;
+
+	void deleteComment(int boardId) throws Exception;
 }

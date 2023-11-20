@@ -1,5 +1,7 @@
 package com.ssafy.vue.board.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.vue.board.dto.BoardCommentDto;
 import com.ssafy.vue.board.dto.BoardDto;
 import com.ssafy.vue.board.dto.BoardLikeDto;
 import com.ssafy.vue.board.dto.BoardListDto;
@@ -38,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BoardController {
 
+	
 	private BoardService boardService;
 
 	public BoardController(BoardService boardService) {
@@ -104,9 +108,15 @@ public class BoardController {
 	
 	@ApiOperation(value = "게시판 글작성", notes = "새로운 게시글 정보를 입력한다.")
 	@PostMapping("/{boardtype}")
+//	public ResponseEntity<?> writeArticle(
+//			@RequestBody @ApiParam(value = "게시글 정보.", required = true) BoardDto boardDto) {
 	public ResponseEntity<?> writeArticle(
-			@RequestBody @ApiParam(value = "게시글 정보.", required = true) BoardDto boardDto) {
+			@RequestParam MultipartFile[] files, @ModelAttribute BoardDto boardDto) throws IllegalStateException, IOException {
 		log.info("writeArticle boardDto - {}", boardDto);
+		for(MultipartFile file : files ) {
+			System.out.println("파일 정보 : "+file);
+			file.transferTo(new File("C://ssafy/"+file.getOriginalFilename()));
+		}
 		try {
 			boardService.writeArticle(boardDto);
 //			return ResponseEntity.ok().build();
