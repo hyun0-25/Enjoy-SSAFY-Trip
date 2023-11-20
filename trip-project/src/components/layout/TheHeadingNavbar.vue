@@ -1,12 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
-import { useMenuStore } from "@/store/menu";
 import { storeToRefs } from "pinia";
 import VfUserRegister from "../users/VfUserRegister.vue";
 import { useAuthStore } from "@/store/auth";
-
-const menuStore = useMenuStore();
-const { menuList } = storeToRefs(menuStore);
 
 const authStore = useAuthStore();
 const isLogin = computed(() => !!authStore.token); //!!의 경우 해당 정보가 truthy하다면 true를 반환
@@ -23,10 +19,15 @@ const types = ref([{ title: "MZ" }, { title: "X" }]);
 </script>
 
 <template>
-  <nav class="flex-container">
-    <div>
+  <nav>
+    <div class="flex-container">
       <!-- nav list -->
       <!-- 메인 로고 -->
+      <div>
+        <router-link :to="{ name: 'main' }">
+          <img src="@/assets/ssafy_logo.png" alt="..." />
+        </router-link>
+      </div>
       <div>
         <ul>
           <li>공지사항</li>
@@ -109,7 +110,9 @@ const types = ref([{ title: "MZ" }, { title: "X" }]);
 
 <style scoped>
 .flex-container {
-  display: flex;
+  /* display: flex; */
+  text-align: center;
+  widows: 100%;
 }
 ul {
   list-style: none;

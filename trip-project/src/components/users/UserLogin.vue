@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const loginForm = ref({
-  userId: "",
+  userId: authStore.rememberedId,
   userPassword: "",
 });
 
@@ -38,10 +38,15 @@ const login = async () => {
             type="password"
             v-model="loginForm.userPassword"
             placeholder="비밀번호"
+            autocomplete="off"
           />
         </p>
         <p>
-          <input type="checkbox" id="remember-id" checked />
+          <input
+            type="checkbox"
+            id="remember-id"
+            v-model="authStore.isRemember"
+          />
           <label for="remember-id">아이디 기억하기</label>
         </p>
         <p>

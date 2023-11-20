@@ -43,7 +43,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES ('admin','1234','관리자','admin@ssafy.com','2023-11-14 04:51:34','admin',NULL,NULL),('ssafy','1234','김싸피','ssafy@ssafy.com','2023-11-14 04:51:58','user','MZ',NULL),('ssafy1','1234','최싸피','ssafy1@ssafy.com','2023-11-14 08:39:33','user','MZ',NULL),('ssafy2','1234','이싸피','ssafy2@ssafy.com','2023-11-14 08:39:33','user','X',NULL),('ssafy4','1234','우싸피','ssafy4@ssafy.com','2023-11-15 06:47:14','user','MZ',NULL),('ssafy5','1234','권싸피','ssafy4@ssafy.com','2023-11-15 06:48:12','user','MZ',NULL);
+INSERT INTO `members` VALUES ('admin','1234','관리자','admin@ssafy.com','2023-11-14 04:51:34','admin',NULL,NULL),('ssafy','1234','김싸피','ssafy@ssafy.com','2023-11-14 04:51:58','user','MZ',NULL),('ssafy098','','1234','ssafy098@ssafy.com','2023-11-20 05:06:04','user','MZ',NULL),('ssafy0981','12324','12341','ssafy098@ssafy.com','2023-11-20 05:09:11','user','MZ',NULL),('ssafy1','1234','최싸피','ssafy1@ssafy.com','2023-11-14 08:39:33','user','MZ',NULL),('ssafy12','1234','구싸피','ssafy9@ssafy.com','2023-11-20 05:59:46','user','MZ',NULL),('ssafy13','1234','구싸피','ssafy9@ssafy.com','2023-11-20 06:00:19','user','MZ',NULL),('ssafy2','1234','이싸피','ssafy2@ssafy.com','2023-11-14 08:39:33','user','X',NULL),('ssafy4','1234','우싸피','ssafy4@ssafy.com','2023-11-15 06:47:14','user','MZ',NULL),('ssafy5','1234','권싸피','ssafy4@ssafy.com','2023-11-15 06:48:12','user','MZ',NULL),('ssafy55','1234','우싸피','ssafy4@ssafy.com','2023-11-20 02:30:46','user','MZ',NULL),('ssafy6','1234','육싸피','ssafy6@ssafy.com','2023-11-20 05:10:17','user','X',NULL),('ssafy7','1234','칠싸피','','2023-11-20 05:12:43','user','X',NULL),('ssafy8.ssafy.com','1234','칠싸피','ssafy8@ssafy.com','2023-11-20 05:13:14','user','X',NULL),('ssafy9','1234','구싸피','ssafy9@ssafy.com','2023-11-20 05:38:34','user','MZ',NULL);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-15 17:18:41
+-- Dump completed on 2023-11-20 17:11:35

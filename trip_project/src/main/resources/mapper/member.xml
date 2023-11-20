@@ -2,47 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.member.model.mapper.MemberMapper">
+<mapper namespace="com.ssafy.vue.member.model.mapper.MemberMapper">
 
-	<!-- <resultMap type="memberDto" id="member">
-		<result column="user_id" property="userId"/>
-		<result column="user_name" property="userName"/>
+	<resultMap type="memberDto" id="member">
+		<id column="user_id" property="userId"/>
+		<result column="nickname" property="nickname"/>
+		<result column="role" property="role"/> 
+		<result column="user_type" property="userType"/>
 	</resultMap>
 	
-	ADMIN
 	<resultMap type="memberDto" id="memberAll" extends="member">
-		<result column="user_password" property="userPwd"/>
-		<result column="email_id" property="emailId"/>
-		<result column="email_domain" property="emailDomain"/>
-		<result column="join_date" property="joinDate"/>
+		<result column="user_password" property="userPassword"/>
+		<result column="email" property="email"/>
+		<result column="register_date" property="joinDate"/>
+		
+		
 	</resultMap>
 
-	<select id="idCheck" parameterType="String" resultType="int">
+	<select id="isCheck" parameterType="String" resultType="int">
 		select count(user_id)
 		from members
-		where user_id = #{userid}
+		where user_id = #{userId}
 	</select>
 
-	<insert id="joinMember" parameterType="memberDto">
-		insert into members (user_name, user_id, user_password, email_id, email_domain, join_date)
-		values (#{userName}, #{userId}, #{userPwd}, #{emailId}, #{emailDomain}, now())
+	<insert id="joinMember" parameterType="MemberDto">
+		insert into members (user_id, user_password, nickname, email, register_date, user_type)
+		values (#{userId}, #{userPassword}, #{nickname}, #{email}, now(),#{userType})
 	</insert>
 
 	<select id="loginMember" parameterType="map" resultMap="member">
-		select user_id, user_name
+		select user_id, nickname, role, user_type
 		from members
-		where user_id = #{userid} and user_password = #{userpwd}
+		where user_id = #{userId} and user_password = #{userPassword}
 	</select>
 	
-	ADMIN
 	<select id="listMember" resultMap="memberAll">
-		select user_name, user_id, user_password, email_id, email_domain, join_date
+		select user_id, user_password, nickname, email, register_date, role, user_type
 		from members
-		order by join_date
+		order by register_date
 	</select>
 	
 	<select id="getMember" parameterType="string" resultMap="memberAll">
-		select user_id, user_name, user_password, email_id, email_domain, join_date
+		select user_id,user_password, nickname, email,register_date, role, user_type
 		from members
 		where user_id = #{userId}
 	</select>
@@ -50,9 +51,10 @@
 	<update id="updateMember" parameterType="memberDto">
 		update members
 		<trim prefix="set" suffixOverrides=",">
-			<if test="userPwd != null">user_password = #{userPwd},</if>
-			<if test="emailId != null">email_id = #{emailId},</if>
-			<if test="emailDomain != null">email_domain = #{emailDomain},</if>
+			<if test="userPassword != null">user_password = #{userPassword},</if>
+			<if test="email != null">email= #{email},</if>
+			<if test="nickname != null">nickname= #{nickname},</if>
+			<if test="userType != null">user_type= #{userType},</if>
 		</trim>
 		where user_id = #{userId}
 	</update>
@@ -60,6 +62,15 @@
 	<delete id="deleteMember" parameterType="String">
 		delete from members
 		where user_id = #{userId}
-	</delete> -->
+	</delete>
+	
+<!-- token & login -->
+	
+	<select id="userInfo" parameterType="string" resultMap="memberAll">
+		select user_id, nickname, email, register_date, role, user_type
+		from members
+		where user_id = #{userId}
+	</select>
+	
 	
 </mapper>
