@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.vue.map.dto.AttractionDto;
+import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
 import com.ssafy.vue.map.model.mapper.MapMapper;
 
@@ -41,6 +42,11 @@ public class MapServiceImpl implements MapService {
 		param.put("sido", map.get("sido"));
 		param.put("gugun", map.get("gugun"));
 		return mapMapper.listAttractions(param);
+	}
+
+	@Override
+	public void writeMyLocation(MyLocationDto mylocationDto) throws Exception {
+		mapMapper.writeMyLocation(mylocationDto);
 	}
 
 }

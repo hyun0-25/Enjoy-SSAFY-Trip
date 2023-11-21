@@ -1,5 +1,6 @@
 package com.ssafy.vue.map.controller;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +11,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.vue.board.dto.BoardDto;
-import com.ssafy.vue.board.dto.BoardListDto;
 import com.ssafy.vue.map.dto.AttractionDto;
+import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
 import com.ssafy.vue.map.model.service.MapService;
 
@@ -77,6 +81,21 @@ public class MapController {
 			return exceptionHandling(e);
 		}
 	}
+	
+	//여행 경로
+	@ApiOperation(value = "여행 경로 작성", notes = "새로운 게시글 정보를 입력한다.")
+	@PostMapping("/{boardtype}")
+	public ResponseEntity<?> writeMyLocation(
+			@RequestBody @ApiParam(value = "게시글 정보.", required = true) MyLocationDto mylocationDto) {
+		log.info("writeMyLocation mylocationDto - {}", mylocationDto);
+		try {
+			mapService.writeMyLocation(mylocationDto);
+			return new ResponseEntity<Void>(HttpStatus.CREATED);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
 	
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();

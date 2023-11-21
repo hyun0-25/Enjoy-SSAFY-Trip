@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ssafy.vue.map.dto.AttractionDto;
+import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
 
 public interface MapMapper {
@@ -14,4 +15,5 @@ public interface MapMapper {
 	
 	AttractionDto getAttraction(int contentid) throws SQLException;
 	List<AttractionDto> listAttractions(Map<String, Object> param) throws SQLException;
+	void writeMyLocation(MyLocationDto mylocationDto) throws SQLException;
 }
