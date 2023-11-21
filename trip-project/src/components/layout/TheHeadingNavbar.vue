@@ -14,8 +14,6 @@ const logout = () => {
 
 // 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
 const dialog = ref(false);
-
-const types = ref([{ title: "MZ" }, { title: "X" }]);
 </script>
 
 <template>
@@ -30,54 +28,30 @@ const types = ref([{ title: "MZ" }, { title: "X" }]);
       </div>
       <div>
         <ul>
-          <li>공지사항</li>
+          <li>
+            <RouterLink :to="{ name: 'notice-list' }">공지사항</RouterLink>
+          </li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 핫플레이스 </a>
-                </template>
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <RouterLink :to="{ name: 'hot-list' }">핫플레이스</RouterLink>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 커뮤니티 </a>
-                </template>
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <RouterLink :to="{ name: 'contest-list' }">콘테스트</RouterLink>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 여행코스 </a>
-                </template>
-
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <!-- <RouterLink :to="{ name: 'free-list' }">여행코스</RouterLink> -->
+              <a href="/">여행코스</a>
+            </div>
+          </li>
+          <li>
+            <div class="text-center">
+              <RouterLink :to="{ name: 'board-trip-mate' }"
+                >여행메이트 모집</RouterLink
+              >
             </div>
           </li>
           <!-- 로그인하지 않은 경우 -->
@@ -95,12 +69,28 @@ const types = ref([{ title: "MZ" }, { title: "X" }]);
           </template>
           <!-- 로그인한 경우 -->
           <template v-else>
-            <li>
-              <RouterLink :to="{ name: 'user-mypage' }">마이페이지</RouterLink>
-            </li>
-            <li>{{ userId }}({{ authStore.user.userType }})님 로그인</li>
+            <!-- admin 로그인 -->
+            <template v-if="authStore.user.role === 'admin'">
+              <li>
+                <RouterLink :to="{ name: 'user-admin-page' }"
+                  >관리자 페이지</RouterLink
+                >
+              </li>
+              <li>{{ userId }}({{ authStore.user.role }})님 로그인</li>
 
-            <li><button @click="logout">로그아웃</button></li>
+              <li><button @click="logout">로그아웃</button></li>
+            </template>
+            <!-- user 로그인 -->
+            <template v-else>
+              <li>
+                <RouterLink :to="{ name: 'user-mypage' }"
+                  >마이페이지</RouterLink
+                >
+              </li>
+              <li>{{ userId }}({{ authStore.user.role }})님 로그인</li>
+
+              <li><button @click="logout">로그아웃</button></li>
+            </template>
           </template>
         </ul>
       </div>

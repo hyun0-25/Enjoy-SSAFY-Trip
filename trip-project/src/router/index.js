@@ -56,6 +56,12 @@ const router = createRouter({
           //관리자 권한 또한 필요한 경우
           // meta: { requiresAuth: true, requiresAdmin: true },
         },
+        //Trip Mate
+        {
+          path: "tripmate",
+          name: "board-trip-mate",
+          component: () => import("@/components/boards/TripMate.vue"),
+        },
       ],
     },
     {
@@ -77,6 +83,11 @@ const router = createRouter({
           path: "/mypage",
           name: "user-mypage",
           component: () => import("@/components/users/UserMyPage.vue"),
+        },
+        {
+          path: "/adminpage",
+          name: "user-admin-page",
+          component: () => import("@/components/users/AdminPage.vue"),
         },
       ],
     },
