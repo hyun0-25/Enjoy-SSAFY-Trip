@@ -14,8 +14,6 @@ const logout = () => {
 
 // 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
 const dialog = ref(false);
-
-const types = ref([{ title: "MZ" }, { title: "X" }]);
 </script>
 
 <template>
@@ -33,51 +31,17 @@ const types = ref([{ title: "MZ" }, { title: "X" }]);
           <li>공지사항</li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 핫플레이스 </a>
-                </template>
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <a v-bind="props"> 핫플레이스 </a>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 커뮤니티 </a>
-                </template>
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <a v-bind="props"> 커뮤니티 </a>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <v-menu open-on-hover>
-                <template v-slot:activator="{ props }">
-                  <a v-bind="props"> 여행코스 </a>
-                </template>
-
-                <v-list>
-                  <v-list-item v-for="(item, index) in types" :key="index">
-                    <v-list-item-title
-                      ><a href="">{{ item.title }}</a></v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <a v-bind="props"> 여행코스 </a>
             </div>
           </li>
           <!-- 로그인하지 않은 경우 -->
