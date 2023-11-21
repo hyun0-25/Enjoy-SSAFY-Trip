@@ -25,4 +25,8 @@ public class MyLocationDto {
 	private int contentId;
 	@ApiModelProperty(value = "여행 코스 순서")
 	private int order;
+	@ApiModelProperty(value = "여행 시작 일자")
+	private String startDate;
+	@ApiModelProperty(value = "여행 종료 일자")
+	private String endDate;
 }

@@ -45,8 +45,8 @@ public class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void writeMyLocation(MyLocationDto mylocationDto) throws Exception {
-		mapMapper.writeMyLocation(mylocationDto);
+	public void writeMyLocation(List<MyLocationDto> mylocationlist) throws Exception {
+		mapMapper.writeMyLocation(mylocationlist);
 	}
 
 }

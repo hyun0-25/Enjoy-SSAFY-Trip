@@ -14,6 +14,6 @@ public interface MapService {
 	
 	AttractionDto getAttraction(int contentid) throws Exception;
 	List<AttractionDto> listAttractions(Map<String, Integer> map) throws Exception;
-	void writeMyLocation(MyLocationDto mylocationDto) throws Exception;
+	void writeMyLocation(List<MyLocationDto> mylocationlist) throws Exception;
 	
 }

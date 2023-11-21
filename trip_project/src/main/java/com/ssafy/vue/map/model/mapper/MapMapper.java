@@ -15,5 +15,5 @@ public interface MapMapper {
 	
 	AttractionDto getAttraction(int contentid) throws SQLException;
 	List<AttractionDto> listAttractions(Map<String, Object> param) throws SQLException;
-	void writeMyLocation(MyLocationDto mylocationDto) throws SQLException;
+	void writeMyLocation(List<MyLocationDto> mylocationlist) throws SQLException;
 }

@@ -84,12 +84,12 @@ public class MapController {
 	
 	//여행 경로
 	@ApiOperation(value = "여행 경로 작성", notes = "새로운 게시글 정보를 입력한다.")
-	@PostMapping("/{boardtype}")
+	@PostMapping("/mylocation")
 	public ResponseEntity<?> writeMyLocation(
-			@RequestBody @ApiParam(value = "게시글 정보.", required = true) MyLocationDto mylocationDto) {
-		log.info("writeMyLocation mylocationDto - {}", mylocationDto);
+			@RequestBody @ApiParam(value = "게시글 정보.", required = true) List<MyLocationDto> mylocationlist) {
+		log.info("writeMyLocation mylocationlist - {}", mylocationlist);
 		try {
-			mapService.writeMyLocation(mylocationDto);
+			mapService.writeMyLocation(mylocationlist);
 			return new ResponseEntity<Void>(HttpStatus.CREATED);
 		} catch (Exception e) {
 			return exceptionHandling(e);

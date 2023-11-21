@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import draggable from "vuedraggable";
 
 //1.store 객체 얻어오기
@@ -388,75 +388,259 @@ const addMyLocation = (info) => {
 const deleteMyLocation = (item) => {
   sample_myloc.value = sample_myloc.value.filter((e) => e !== item);
 };
+watch(sample_myloc, () => {
+  console.log(sample_myloc.value);
+});
+
+const caldialog = ref(false);
+const startDate = ref(null);
+const endDate = ref(null);
+const PickstartDate = ref(null);
+const PickendDate = ref(null);
+const MaxDate = ref(null);
+
+watch(PickstartDate, () => {
+  var sdate = new Date(PickstartDate.value);
+  console.log(sdate);
+  var mdate = new Date(sdate.setDate(sdate.getDate() + 7));
+  MaxDate.value = mdate;
+  // console.log(MaxDate.value);
+  if (PickstartDate.value != null) {
+    startDateFormat.value = PickstartDate.value.toISOString().slice(0, 10);
+  }
+});
+watch(PickendDate, () => {
+  var sdate = new Date(PickstartDate.value);
+  console.log(sdate);
+  var mdate = new Date(sdate.setDate(sdate.getDate() + 7));
+  MaxDate.value = mdate;
+  // console.log(MaxDate.value);
+  if (PickendDate.value != null) {
+    endDateFormat.value = PickendDate.value.toISOString().slice(0, 10);
+  }
+});
+console.log("2023-3-1");
+const cancel = () => {
+  caldialog.value = false;
+  // 취소 버튼을 눌렀을 때의 로직 추가
+};
+const startDateFormat = ref("");
+const endDateFormat = ref("");
+const tripDateFormat = ref("");
+//최대 사이즈
+const size = ref(0);
+//진짜 사이즈
+const listsize = ref(0);
+const confirm = () => {
+  if (size.value == 0) {
+    size.value = listsize.value =
+      PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+    console.log(size.value);
+    console.log(listsize.value);
+    // tripsample.value = Array.from(Array(size), () => new Array());
+    tripsample.value = Array.from(Array(size), () => sample.value);
+  } else {
+    var addsize =
+      PickendDate.value.getDate() -
+      PickstartDate.value.getDate() +
+      1 -
+      size.value;
+    if (addsize > 0) {
+      size.value = listsize.value =
+        PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+      for (var i = 0; i < addsize; i++) {
+        tripsample.value.push(sample.value);
+        // tripsample.value.push(new Array());
+      }
+    } else {
+      listsize.value =
+        PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+    }
+  }
+
+  // 확인 버튼을 눌렀을 때의 로직 추가
+  caldialog.value = false;
+  startDate.value = PickstartDate.value;
+  endDate.value = PickendDate.value;
+  if (startDate.value != null && endDate.value != null) {
+    startDateFormat.value = startDate.value.toISOString().slice(0, 10);
+    endDateFormat.value = endDate.value.toISOString().slice(0, 10);
+    tripDateFormat.value = startDateFormat.value + " ~ " + endDateFormat.value;
+
+    console.log(tripsample.value.slice(listsize));
+    tripsample.value = tripsample.value.slice(listsize);
+  }
+};
+
+const openModal = () => {
+  caldialog.value = true;
+};
+
+const trip_title = ref("");
+
+const addAllMyLocation = () => {};
+
+const isListOpen = ref(false);
+
+const tripsample = ref([]);
+const toggleList = () => {
+  if (PickstartDate.value != null && PickendDate.value != null) {
+    isListOpen.value = !isListOpen.value;
+    // if (isListOpen.value) {
+    // } else {
+    // }
+    // console.log(PickendDate.value.getDate() - PickstartDate.value.getDate());
+  } else {
+    alert("여행 일정을 선택해주세요!");
+  }
+};
 </script>
 
 <template>
   <div style="display: flex">
-    <div style="width: 20%">
-      <v-card class="mx-auto">
-        <v-container>
-          <v-virtual-scroll :items="sample" height="600">
-            <template v-slot:default="{ item }">
-              <!-- <v-row dense> -->
-              <!-- <v-col v-for="attr in items" :key="attr.raw.contentId" cols="12"> -->
-              <v-card>
-                <div class="d-flex flex-no-wrap justify-space-between">
-                  <v-avatar
-                    class="ma-3"
-                    size="150"
-                    rounded="0"
-                    @click="ondialog(item)"
-                  >
-                    <v-img :src="item.firstImage"></v-img>
-                  </v-avatar>
-                  <div>
-                    <v-card-title class="text-h5" @click="ondialog(item)">
-                      {{ item.title }}
-                    </v-card-title>
-
-                    <v-card-subtitle>{{ item.address }}</v-card-subtitle>
-
-                    <v-card-actions>
-                      <v-btn
-                        class="ms-2"
-                        variant="outlined"
-                        size="small"
-                        @click="addMyLocation(item)"
+    <div style="width: 20%" v-show="!isListOpen">
+      <v-expand-x-transition style="width: 200%">
+        <v-card>
+          <v-card class="mx-auto">
+            <v-container>
+              <v-virtual-scroll
+                :items="sample"
+                height="600"
+                class="horizontal-scroll"
+                style="display: flex"
+              >
+                <template v-slot:default="{ item }">
+                  <!-- <v-row dense> -->
+                  <!-- <v-col v-for="attr in items" :key="attr.raw.contentId" cols="12"> -->
+                  <v-card>
+                    <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
+                    <div>
+                      <v-avatar
+                        class="ma-3"
+                        size="100"
+                        rounded="0"
+                        @click="ondialog(item)"
                       >
-                        +
-                      </v-btn>
-                    </v-card-actions>
-                  </div>
-                </div>
-              </v-card>
-            </template>
-          </v-virtual-scroll>
+                        <v-img :src="item.firstImage"></v-img>
+                      </v-avatar>
+                      <div>
+                        <v-card-title class="text-h5" @click="ondialog(item)">
+                          {{ item.title }}
+                        </v-card-title>
 
-          <v-dialog v-model="dialog" width="50vw">
-            <v-card>
-              <v-avatar class="ma-3" size="125" rounded="0">
-                <v-img :src="attractionInfo.firstImage"></v-img>
-              </v-avatar>
-              <v-card-title class="text-h6">
-                {{ attractionInfo.title }}
-              </v-card-title>
-              <v-card-text>{{ attractionInfo.overview }}</v-card-text>
-              <v-card-actions>
-                <v-btn color="primary" block @click="offdialog()">X</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-container>
-      </v-card>
+                        <v-card-subtitle>{{ item.address }}</v-card-subtitle>
+
+                        <v-card-actions>
+                          <v-btn
+                            class="ms-2"
+                            variant="outlined"
+                            size="small"
+                            @click="addMyLocation(item)"
+                          >
+                            +
+                          </v-btn>
+                        </v-card-actions>
+                      </div>
+                    </div>
+                  </v-card>
+                </template>
+              </v-virtual-scroll>
+
+              <v-dialog v-model="dialog" width="50vw">
+                <v-card>
+                  <v-avatar class="ma-3" size="150" rounded="0">
+                    <v-img :src="attractionInfo.firstImage"></v-img>
+                  </v-avatar>
+                  <v-card-title class="text-h6">
+                    {{ attractionInfo.title }}
+                  </v-card-title>
+                  <v-card-text>{{ attractionInfo.overview }}</v-card-text>
+                  <v-card-actions>
+                    <v-btn color="primary" block @click="offdialog()">X</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-container>
+          </v-card>
+        </v-card>
+      </v-expand-x-transition>
     </div>
-    <div style="width: 20%">
+
+    <div style="width: 20%; position: relative">
       <v-card class="mx-auto">
         <v-container>
+          <v-col>
+            <v-text-field
+              v-model="trip_title"
+              label="여행명"
+              variant="outlined"
+              :rules="[(v) => !!v || '여행명을 입력해주세요.']"
+            ></v-text-field>
+          </v-col>
+          <div>
+            <v-btn @click="openModal">여행 일정 선택</v-btn>
+            <h4>{{ tripDateFormat }}</h4>
+
+            <v-dialog v-model="caldialog" max-width="800px">
+              <v-card>
+                <v-card-title class="headline">여행 일정 선택</v-card-title>
+                <v-card-text>최대 7일까지 설정할 수 있습니다</v-card-text>
+                <v-card-text>
+                  <div style="display: flex; justify-content: space-around">
+                    <div>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="startDateFormat"
+                            label="시작 날짜"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                          ></v-text-field>
+                          <v-date-picker
+                            v-model="PickstartDate"
+                            ref="startDatePicker"
+                            show-adjacent-months
+                          ></v-date-picker>
+                        </v-col>
+                      </v-row>
+                    </div>
+                    <div>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="endDateFormat"
+                            label="종료 날짜"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                          ></v-text-field>
+                          <v-date-picker
+                            v-model="PickendDate"
+                            ref="endDatePicker"
+                            show-adjacent-months
+                            :min="PickstartDate"
+                            :max="MaxDate"
+                          ></v-date-picker>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </div>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="blue darken-1" text @click="cancel">취소</v-btn>
+                  <v-btn color="blue darken-1" text @click="confirm"
+                    >확인</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
+
           <v-virtual-scroll :items="sample_myloc" height="600">
             <template v-slot:default="{ item }">
               <v-card>
-                <div class="d-flex flex-no-wrap justify-space-between">
-                  <v-avatar class="ma-3" size="125" rounded="0">
+                <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
+                <div>
+                  <v-avatar class="ma-3" size="100" rounded="0">
                     <v-img :src="item.firstImage"></v-img>
                   </v-avatar>
                   <div>
@@ -481,15 +665,92 @@ const deleteMyLocation = (item) => {
               </v-card>
             </template>
           </v-virtual-scroll>
+          <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
+            여행생성
+          </v-btn>
         </v-container>
       </v-card>
+      <v-list-item @click="toggleList" class="slide-btn">
+        <h6>일정</h6>
+
+        <v-list-item-action>
+          <v-icon>{{
+            isListOpen ? "mdi-chevron-left" : "mdi-chevron-right"
+          }}</v-icon>
+        </v-list-item-action>
+      </v-list-item>
+      <!-- Content area -->
+      <v-expand-x-transition style="width: 200%">
+        <v-card v-show="isListOpen" class="slide">
+          <v-card-text>
+            <!-- Your content goes here -->
+            <p>여행 일정</p>
+            <v-virtual-scroll :items="tripsample" height="600">
+              <template v-slot:default="{ item: row, index: rowIndex }">
+                <v-virtual-scroll :items="row" class="horizontal-scroll">
+                  <template v-slot:default="{ item, index }">
+                    <v-card class="item-card">
+                      <v-avatar class="ma-3" size="100" rounded="0">
+                        <v-img :src="item.firstImage"></v-img>
+                      </v-avatar>
+                      <div>
+                        <v-card-title class="text-h6">{{
+                          item.title
+                        }}</v-card-title>
+                        <v-card-subtitle>{{ item.address }}</v-card-subtitle>
+                        <v-card-actions>
+                          <v-btn
+                            class="ms-2"
+                            variant="outlined"
+                            size="small"
+                            @click="deleteMyLocation(rowIndex, index)"
+                          >
+                            X
+                          </v-btn>
+                        </v-card-actions>
+                      </div>
+                    </v-card>
+                  </template>
+                </v-virtual-scroll>
+              </template>
+            </v-virtual-scroll>
+          </v-card-text>
+        </v-card>
+      </v-expand-x-transition>
     </div>
-    <div style="width: 75%">
-      <div ref="container" id="map" style="height: 600"></div>
+
+    <div style="width: 80%">
+      <div ref="container" id="map" style="height: 85%"></div>
       <p><em>지도를 클릭해주세요!</em></p>
       <div v-html="message"></div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateX(100%);
+  z-index: 5;
+  background-color: rgba(241, 239, 239, 0.682);
+  border-radius: 0px 20px 20px 0px;
+}
+.slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  z-index: 3;
+  border-radius: 20px;
+}
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+}
+
+.item-card {
+  min-width: 200px; /* Set the minimum width of each item card */
+}
+</style>
