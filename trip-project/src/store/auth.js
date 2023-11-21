@@ -12,7 +12,10 @@ export const useAuthStore = defineStore(
       userId: "",
       userNickname: "",
       role: "",
+      email: "",
       userType: "",
+      registerDate: "",
+      birthday: "",
     });
     const token = ref(""); //jwt 토큰 정보
     const isRemember = ref(false);
@@ -29,6 +32,7 @@ export const useAuthStore = defineStore(
       user.value.userId = decoded.userId;
       user.value.userNickname = decoded.userNickname;
       user.value.role = decoded.role;
+      user.value.email = decoded.email;
       user.value.userType = decoded.userType;
 
       //아이디 기억
@@ -44,6 +48,7 @@ export const useAuthStore = defineStore(
       user.value.userId = "";
       user.value.userNickname = "";
       user.value.role = "";
+      user.value.email = "";
       user.value.userType = "";
       token.value = "";
     };
@@ -60,7 +65,10 @@ export const useAuthStore = defineStore(
       console.log("isCheck 아이디 중복 검사 : ", userId, response.data);
       return response.data;
     };
-
+    // ============== 사용자 정보 수정 ================
+    const modify = async (userInfo) => {
+      await axios.put(`api/user/${userInfo}`);
+    };
     //-------------------------------------------------
 
     return {
@@ -73,6 +81,7 @@ export const useAuthStore = defineStore(
       clearUser,
       registUser,
       isCheck,
+      modify,
     };
   },
   //새로고침시 데이터 유지를 위한 설정(localStorage에 저장해서 불러오는 방식)

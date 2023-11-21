@@ -26,8 +26,9 @@ public class JWTUtil {
 
 		Claims claims = Jwts.claims();
 		claims.put("userId", member.getUserId());
-		claims.put("nickname", member.getNickname());
+		claims.put("userNickname", member.getNickname());
 		claims.put("role", member.getRole());
+		claims.put("email", member.getEmail());
 		claims.put("userType",member.getUserType());
 
 		return Jwts.builder()
@@ -59,29 +60,29 @@ public class JWTUtil {
 	}
 
 
-	public static void main(String[] args) {
-		// 테스트용 코드
-		MemberDto member = new MemberDto();
-		member.setUserId("ssafy");
-		member.setNickname("김싸피");
-		member.setRole("user");
-		member.setUserType("MZ");
-
-		//토큰 생성
-		String token = generateToken(member);
-		System.out.println("생성된 토큰 : " + token);
-
-		//토큰 디코딩 ( 단순 정보만 추출 ) => SecretKey 필요X 누구나 추출 가능 
-		String decoded = decodeToken(token);
-		System.out.println("디코딩된 토큰 : "+decoded);
-		
-		//유효성 검증 테스트 => SecretKey 필요 누구나 할 수 없음
-		try {
-			Jws<Claims> parsedToken = validateToken(token);
-			System.out.println("Body: " + parsedToken.getBody());
-			System.out.println("유효한 토큰.");
-		} catch (Exception e) {
-			System.out.println("유효하지 않거나 만료된 토큰.");
-		}
-	}
+//	public static void main(String[] args) {
+//		// 테스트용 코드
+//		MemberDto member = new MemberDto();
+//		member.setUserId("ssafy");
+//		member.setNickname("김싸피");
+//		member.setRole("user");
+//		member.setUserType("MZ");
+//
+//		//토큰 생성
+//		String token = generateToken(member);
+//		System.out.println("생성된 토큰 : " + token);
+//
+//		//토큰 디코딩 ( 단순 정보만 추출 ) => SecretKey 필요X 누구나 추출 가능 
+//		String decoded = decodeToken(token);
+//		System.out.println("디코딩된 토큰 : "+decoded);
+//		
+//		//유효성 검증 테스트 => SecretKey 필요 누구나 할 수 없음
+//		try {
+//			Jws<Claims> parsedToken = validateToken(token);
+//			System.out.println("Body: " + parsedToken.getBody());
+//			System.out.println("유효한 토큰.");
+//		} catch (Exception e) {
+//			System.out.println("유효하지 않거나 만료된 토큰.");
+//		}
+//	}
 }

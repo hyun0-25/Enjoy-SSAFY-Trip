@@ -6,17 +6,13 @@
 
 	<resultMap type="memberDto" id="member">
 		<id column="user_id" property="userId"/>
-		<result column="nickname" property="nickname"/>
-		<result column="role" property="role"/> 
-		<result column="user_type" property="userType"/>
-	</resultMap>
-	
-	<resultMap type="memberDto" id="memberAll" extends="member">
+		<result column="nickname" property="nickname"/>		
 		<result column="user_password" property="userPassword"/>
 		<result column="email" property="email"/>
 		<result column="register_date" property="joinDate"/>
-		
-		
+		<result column="role" property="role"/> 
+		<result column="birthday" property="birthday"/>		
+		<result column="user_type" property="userType"/>
 	</resultMap>
 
 	<select id="isCheck" parameterType="String" resultType="int">
@@ -31,18 +27,18 @@
 	</insert>
 
 	<select id="loginMember" parameterType="map" resultMap="member">
-		select user_id, nickname, role, user_type
+		select user_id, nickname, email, role, user_type
 		from members
 		where user_id = #{userId} and user_password = #{userPassword}
 	</select>
 	
-	<select id="listMember" resultMap="memberAll">
+	<select id="listMember" resultMap="member">
 		select user_id, user_password, nickname, email, register_date, role, user_type
 		from members
 		order by register_date
 	</select>
 	
-	<select id="getMember" parameterType="string" resultMap="memberAll">
+	<select id="getMember" parameterType="string" resultMap="member">
 		select user_id,user_password, nickname, email,register_date, role, user_type
 		from members
 		where user_id = #{userId}
@@ -54,6 +50,7 @@
 			<if test="userPassword != null">user_password = #{userPassword},</if>
 			<if test="email != null">email= #{email},</if>
 			<if test="nickname != null">nickname= #{nickname},</if>
+			<if test="birthday != null">birthday= #{birthday},</if>
 			<if test="userType != null">user_type= #{userType},</if>
 		</trim>
 		where user_id = #{userId}
@@ -66,8 +63,8 @@
 	
 <!-- token & login -->
 	
-	<select id="userInfo" parameterType="string" resultMap="memberAll">
-		select user_id, nickname, email, register_date, role, user_type
+	<select id="userInfo" parameterType="string" resultMap="member">
+		select user_id, nickname, email, register_date, role, birthday, user_type
 		from members
 		where user_id = #{userId}
 	</select>

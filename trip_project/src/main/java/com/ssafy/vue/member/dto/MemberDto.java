@@ -20,6 +20,8 @@ public class MemberDto {
 	private String joinDate;
 	@ApiModelProperty(value = "유저/관리자 구분")
 	private String role;
+	@ApiModelProperty(value = "사용자 생일")
+	private String birthday;
 	@ApiModelProperty(value = "유저의 MZX 구분")
 	private String userType;
 	@ApiModelProperty(value = "refreshToken")

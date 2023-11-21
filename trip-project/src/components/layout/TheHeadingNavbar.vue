@@ -28,20 +28,30 @@ const dialog = ref(false);
       </div>
       <div>
         <ul>
-          <li>공지사항</li>
+          <li>
+            <RouterLink :to="{ name: 'notice-list' }">공지사항</RouterLink>
+          </li>
           <li>
             <div class="text-center">
-              <a v-bind="props"> 핫플레이스 </a>
+              <RouterLink :to="{ name: 'hot-list' }">핫플레이스</RouterLink>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <a v-bind="props"> 커뮤니티 </a>
+              <RouterLink :to="{ name: 'contest-list' }">콘테스트</RouterLink>
             </div>
           </li>
           <li>
             <div class="text-center">
-              <a v-bind="props"> 여행코스 </a>
+              <!-- <RouterLink :to="{ name: 'free-list' }">여행코스</RouterLink> -->
+              <a href="/">여행코스</a>
+            </div>
+          </li>
+          <li>
+            <div class="text-center">
+              <RouterLink :to="{ name: 'board-trip-mate' }"
+                >여행메이트 모집</RouterLink
+              >
             </div>
           </li>
           <!-- 로그인하지 않은 경우 -->
@@ -59,12 +69,28 @@ const dialog = ref(false);
           </template>
           <!-- 로그인한 경우 -->
           <template v-else>
-            <li>
-              <RouterLink :to="{ name: 'user-mypage' }">마이페이지</RouterLink>
-            </li>
-            <li>{{ userId }}({{ authStore.user.userType }})님 로그인</li>
+            <!-- admin 로그인 -->
+            <template v-if="authStore.user.role === 'admin'">
+              <li>
+                <RouterLink :to="{ name: 'user-admin-page' }"
+                  >관리자 페이지</RouterLink
+                >
+              </li>
+              <li>{{ userId }}({{ authStore.user.role }})님 로그인</li>
 
-            <li><button @click="logout">로그아웃</button></li>
+              <li><button @click="logout">로그아웃</button></li>
+            </template>
+            <!-- user 로그인 -->
+            <template v-else>
+              <li>
+                <RouterLink :to="{ name: 'user-mypage' }"
+                  >마이페이지</RouterLink
+                >
+              </li>
+              <li>{{ userId }}({{ authStore.user.role }})님 로그인</li>
+
+              <li><button @click="logout">로그아웃</button></li>
+            </template>
           </template>
         </ul>
       </div>
