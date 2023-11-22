@@ -72,16 +72,17 @@
 		<result column="order" property="order"/>
 		<result column="start_date" property="startDate"/>
 		<result column="end_date" property="endDate"/>
+		<result column="course_order" property="courseOrder"/>
 	</resultMap>
 	
 	<insert id="writeMyLocation" parameterType="java.util.List">
 		<selectKey resultType="int" keyProperty="nextcourseId" order="BEFORE">
 		 	select if(isnull(max(course_id)), 1, max(course_id)+1) from mylocation
 		</selectKey>
-		insert into mylocation(course_id, course_name, user_id, content_id, `order`, start_date, end_date)
+		insert into mylocation(course_id, course_name, user_id, content_id, `order`, start_date, end_date, course_order)
 		values
 		<foreach collection="mylocationlist" item="item" separator=" , ">
-			(#{nextcourseId}, #{item.courseName}, #{item.userId}, #{item.contentId}, #{item.order}, #{item.startDate}, #{item.endDate})
+			(#{nextcourseId}, #{item.courseName}, #{item.userId}, #{item.contentId}, #{item.order}, #{item.startDate}, #{item.endDate}, #{item.courseOrder})
 		</foreach>
 	</insert>
 	
