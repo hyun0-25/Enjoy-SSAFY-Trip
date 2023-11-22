@@ -3,7 +3,6 @@ import { ref } from "vue";
 const props = defineProps(["options"]);
 
 const searchInfo = ref({
-  key: "",
   word: "",
 });
 </script>

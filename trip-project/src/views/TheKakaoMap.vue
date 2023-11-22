@@ -15,8 +15,9 @@ const attractionStore = useAttractionStore();
 const attractions = computed(() => attractionStore.attractions);
 
 const params = ref({
-  sido: 0, //시도
-  gugun: 0, //구군
+  sido: -1, //시도
+  gugun: -1, //구군
+  word: "", //검색데이터
 });
 
 const sample = ref([
@@ -347,14 +348,25 @@ init();
 const gugunList = ref([{ text: "구군선택", value: "" }]);
 
 const guguns = computed(() => attractionStore.guguns);
+
 const onChangeSido = async (val) => {
   await attractionStore.listGugun({ sido: val });
   getGugunList();
+  params.value.sido = val;
+  if (params.value.gugun == 0 && params.value.word == "") {
+    alert("시도 전체 검색시 여행지명을 입력해주세요!");
+    params.value.gugun = -1;
+    attractionStore.getAttractions(params.value);
+    params.value.gugun = 0;
+    return;
+  }
+  attractionStore.getAttractions(params.value);
 };
 
 const getGugunList = () => {
   let options = [];
   options.push({ text: "구군선택", value: "" });
+  options.push({ text: "전체", value: 0 });
   guguns.value.forEach((gugun) => {
     options.push({ text: gugun.gugunName, value: gugun.gugunCode });
   });
@@ -362,17 +374,25 @@ const getGugunList = () => {
 };
 
 const onChangeGugun = (val) => {
-  params.value.sido = val;
   params.value.gugun = val;
   console.log(params.value);
   // getChargingStations();
+  if (val == 0 && params.value.word == "") {
+    alert("시도 전체 검색시 여행지명을 입력해주세요!");
+    params.value.gugun = -1;
+    console.log("hi");
+    attractionStore.getAttractions(params.value);
+    params.value.gugun = 0;
+    return;
+  }
   attractionStore.getAttractions(params.value);
 };
 
 //////////////////////////////////////////////////////////////////////
 //지도
 const container = ref(null); //<div id="map"> 엘리먼트 객체
-const map = ref(null); //kakaoMap 객체
+// const map = ref(null); //kakaoMap 객체
+var map;
 
 const message = ref("");
 
@@ -385,7 +405,8 @@ const loadScript = () => {
   script.onload = () => kakao.maps.load(loadMap);
   document.head.appendChild(script);
 };
-
+const markers = ref([]);
+const positions = ref([]);
 //지도 불러오는 메소드
 const loadMap = () => {
   //1.지도 출력
@@ -393,30 +414,101 @@ const loadMap = () => {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
     level: 3,
   };
-  map.value = new kakao.maps.Map(container.value, options);
+  map = new kakao.maps.Map(container.value, options);
 
-  //2. 마커 찍기
-  const marker = new kakao.maps.Marker({
-    position: map.value.getCenter(),
-  });
-  marker.setMap(map.value);
+  // //2. 마커 찍기
+  // const marker = new kakao.maps.Marker({
+  //   position: map.value.getCenter(),
+  // });
+  // marker.setMap(map.value);
 
-  //3. 지도 click 이벤트 핸들링
-  kakao.maps.event.addListener(map.value, "click", (mouseEvent) => {
-    // 클릭한 위도, 경도 정보를 가져옵니다
-    const latlng = mouseEvent.latLng;
-    // 마커 위치를 클릭한 위치로 옮깁니다
-    marker.setPosition(latlng);
+  // //3. 지도 click 이벤트 핸들링
+  // kakao.maps.event.addListener(map.value, "click", (mouseEvent) => {
+  //   // 클릭한 위도, 경도 정보를 가져옵니다
+  //   const latlng = mouseEvent.latLng;
+  //   // 마커 위치를 클릭한 위치로 옮깁니다
+  //   marker.setPosition(latlng);
 
-    message.value = `<h3>클릭한 위치의 위도는 ${latlng.getLat()}이고, 경도는 ${latlng.getLng()} 입니다</h3>`;
-  });
+  //   message.value = `<h3>클릭한 위치의 위도는 ${latlng.getLat()}이고, 경도는 ${latlng.getLng()} 입니다</h3>`;
+  // });
 };
+
+const selectAttraction = ref({});
+watch(
+  () => selectAttraction.value,
+  () => {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(
+      selectAttraction.value.latitude,
+      selectAttraction.value.longitude
+    );
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
+  },
+  { deep: true }
+);
+
+watch(
+  () => attractions.value,
+  () => {
+    positions.value = [];
+    attractions.value.forEach((station) => {
+      let obj = {};
+      obj.latlng = new kakao.maps.LatLng(station.latitude, station.longitude);
+      obj.title = station.title;
+
+      positions.value.push(obj);
+    });
+    loadMarkers();
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) loadMap();
   else loadScript();
 });
+const loadMarkers = () => {
+  // 현재 표시되어있는 marker들이 있다면 map에 등록된 marker를 제거한다.
+  deleteMarkers();
 
+  markers.value = [];
+  positions.value.forEach((position) => {
+    const marker = new kakao.maps.Marker({
+      map: map, // 마커를 표시할 지도
+      position: position.latlng, // 마커를 표시할 위치
+      title: position.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨.
+      clickable: true, // // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
+      // image: markerImage, // 마커의 이미지
+    });
+    markers.value.push(marker);
+    marker.setMap(map);
+  });
+  if (positions.value.length > 0) {
+    map.panTo(positions.value[0].latlng);
+  }
+
+  // 4. 지도를 이동시켜주기
+  // 배열.reduce( (누적값, 현재값, 인덱스, 요소)=>{ return 결과값}, 초기값);
+  // const bounds = positions.value.reduce(
+  //   (bounds, position) => bounds.extend(position.latlng),
+  //   new kakao.maps.LatLngBounds()
+  // );
+
+  // map.setBounds(bounds);
+};
+
+const deleteMarkers = () => {
+  if (markers.value.length > 0) {
+    markers.value.forEach((marker) => marker.setMap(null));
+  }
+};
+
+const markposition = (item) => {
+  selectAttraction.value = item;
+};
 const dialog = ref(false);
 const attractionInfo = ref({});
 const sample_myloc = ref([]);
@@ -534,16 +626,6 @@ const mylocationStore = useMyLocationStore();
 
 const listForm = ref([]);
 
-const writeForm = ref({
-  contentId: 0,
-  courseName: "",
-  userId: "ssafy",
-  startDate: "",
-  endDate: "",
-  courseOrder: 0,
-  order: 0,
-});
-
 const addAllMyLocation = async () => {
   if (PickstartDate.value == null || PickendDate.value == null) {
     alert("일정을 선택해주세요!");
@@ -561,10 +643,6 @@ const addAllMyLocation = async () => {
     return;
   }
   //else
-
-  // writeForm.value.courseName = trip_title.value;
-  // writeForm.value.startDate = startDateFormat.value;
-  // writeForm.value.endDate = endDateFormat.value;
   for (var i = 0; i < tripview.value.length; i++) {
     for (var j = 0; j < tripview.value[i].length; j++) {
       var writeForm = {
@@ -579,8 +657,6 @@ const addAllMyLocation = async () => {
       listForm.value.push(writeForm);
     }
   }
-  console.log("보낼 결과");
-  console.log(listForm.value);
   try {
     await mylocationStore.addMyLocations(listForm.value);
     router.push({ path: "/map" });
@@ -595,13 +671,24 @@ const isListOpen = ref(false);
 const toggleList = () => {
   if (PickstartDate.value != null && PickendDate.value != null) {
     isListOpen.value = !isListOpen.value;
-    // if (isListOpen.value) {
-    // } else {
-    // }
-    // console.log(PickendDate.value.getDate() - PickstartDate.value.getDate());
   } else {
     alert("여행 일정을 선택해주세요!");
   }
+};
+
+const getSearchArticles = (searchKeyword) => {
+  console.log("BoardList의 조건 검색 메소드 호출:", searchKeyword);
+
+  params.value.word = searchKeyword.word;
+
+  if (params.value.gugun == 0 && params.value.word == "") {
+    params.value.gugun = -1;
+    attractionStore.getAttractions(params.value);
+    params.value.gugun = 0;
+    return;
+  }
+  //목록 조회 필요
+  attractionStore.getAttractions(params.value);
 };
 </script>
 
@@ -632,12 +719,17 @@ const toggleList = () => {
                         class="ma-3"
                         size="100"
                         rounded="0"
-                        @click="ondialog(item)"
+                        @dblclick="ondialog(item)"
+                        @click="markposition(item)"
                       >
                         <v-img :src="item.firstImage"></v-img>
                       </v-avatar>
                       <div>
-                        <v-card-title class="text-h5" @click="ondialog(item)">
+                        <v-card-title
+                          class="text-h5"
+                          @dblclick="ondialog(item)"
+                          @click="markposition(item)"
+                        >
                           {{ item.title }}
                         </v-card-title>
 

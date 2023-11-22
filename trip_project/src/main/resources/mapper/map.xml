@@ -37,17 +37,6 @@
 		<result column="overview" property="overview"/>
 	</resultMap>
 	
-<!-- 	<sql id="search">
-		<if test="word != null and word != ''">
-			<if test="key == 'subject'">
-				where subject like concat('%', #{word}, '%')
-			</if>
-			<if test="key != 'subject'">
-				where ${key} = #{word}
-			</if>
-		</if>
-	</sql> -->
-	
 	<select id="getAttraction" parameterType="int" resultMap="attraction">
 		select ai.content_id, ai.content_type_id, ai.title, ai.addr1, ai.sido_code, ai.gugun_code, ai.latitude, ai.longitude, ai.first_image, ai.first_image2, ad.overview
 		from attraction_info ai join attraction_description ad
@@ -55,12 +44,28 @@
 		where ai.content_id = #{contentid}
 	</select>
 	
+	<sql id="search">
+		<if test="word != null and word != ''">
+			and title like concat('%', #{word}, '%')
+		</if>
+	</sql>
+	<sql id="allgugun">
+		<if test="gugun != 0">
+			and ai.gugun_code = #{gugun}
+		</if>
+		<if test="gugun == 0">
+			<if test="word == null or word == ''">
+				and ai.gugun_code = #{gugun}
+			</if>
+		</if>
+	</sql>
 	<select id="listAttractions" parameterType="map" resultMap="attraction">
 		select ai.content_id, ai.content_type_id, ai.title, ai.addr1, ai.sido_code, ai.gugun_code, ai.latitude, ai.longitude, ai.first_image, ai.first_image2, ad.overview
 		from attraction_info ai join attraction_description ad
 		on ai.content_id = ad.content_id
 		where ai.sido_code = #{sido}
-		and ai.gugun_code = #{gugun}
+		<include refid="allgugun"></include>
+		<include refid="search"></include>
 	</select>
 	
 	<resultMap type="mylocationDto" id="mylocation">

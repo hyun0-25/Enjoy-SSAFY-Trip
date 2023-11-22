@@ -41,6 +41,7 @@ public class MapServiceImpl implements MapService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("sido", map.get("sido"));
 		param.put("gugun", map.get("gugun"));
+		param.put("word", map.get("word") == null ? "" : map.get("word"));
 		return mapMapper.listAttractions(param);
 	}
 
