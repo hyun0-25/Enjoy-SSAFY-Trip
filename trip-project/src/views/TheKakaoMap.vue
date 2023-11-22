@@ -410,23 +410,21 @@ watch(PickstartDate, () => {
   }
 });
 watch(PickendDate, () => {
-  var sdate = new Date(PickstartDate.value);
-  console.log(sdate);
-  var mdate = new Date(sdate.setDate(sdate.getDate() + 7));
-  MaxDate.value = mdate;
-  // console.log(MaxDate.value);
   if (PickendDate.value != null) {
     endDateFormat.value = PickendDate.value.toISOString().slice(0, 10);
   }
 });
-console.log("2023-3-1");
 const cancel = () => {
   caldialog.value = false;
   // 취소 버튼을 눌렀을 때의 로직 추가
 };
+
 const startDateFormat = ref("");
 const endDateFormat = ref("");
-const tripDateFormat = ref("");
+const tripDateFormat = ref("일정을 선택해주세요");
+
+const tripsample = ref([]);
+const tripview = ref([]);
 //최대 사이즈
 const size = ref(0);
 //진짜 사이즈
@@ -435,10 +433,14 @@ const confirm = () => {
   if (size.value == 0) {
     size.value = listsize.value =
       PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
-    console.log(size.value);
-    console.log(listsize.value);
+    // console.log(size.value);
+    // console.log(listsize.value);
     // tripsample.value = Array.from(Array(size), () => new Array());
-    tripsample.value = Array.from(Array(size), () => sample.value);
+    // tripsample.value = Array.from(Array(size), () => sample.value);
+    for (var i = 0; i < size.value; i++) {
+      tripsample.value.push(sample.value);
+      // tripsample.value.push(new Array());
+    }
   } else {
     var addsize =
       PickendDate.value.getDate() -
@@ -467,8 +469,12 @@ const confirm = () => {
     endDateFormat.value = endDate.value.toISOString().slice(0, 10);
     tripDateFormat.value = startDateFormat.value + " ~ " + endDateFormat.value;
 
-    console.log(tripsample.value.slice(listsize));
-    tripsample.value = tripsample.value.slice(listsize);
+    console.log("크기");
+    console.log(size.value);
+    console.log(listsize.value);
+
+    tripview.value = tripsample.value.slice(0, listsize.value);
+    console.log(tripview.value);
   }
 };
 
@@ -482,7 +488,6 @@ const addAllMyLocation = () => {};
 
 const isListOpen = ref(false);
 
-const tripsample = ref([]);
 const toggleList = () => {
   if (PickstartDate.value != null && PickendDate.value != null) {
     isListOpen.value = !isListOpen.value;
@@ -499,16 +504,11 @@ const toggleList = () => {
 <template>
   <div style="display: flex">
     <div style="width: 20%" v-show="!isListOpen">
-      <v-expand-x-transition style="width: 200%">
+      <v-expand-x-transition>
         <v-card>
           <v-card class="mx-auto">
             <v-container>
-              <v-virtual-scroll
-                :items="sample"
-                height="600"
-                class="horizontal-scroll"
-                style="display: flex"
-              >
+              <v-virtual-scroll :items="sample" height="600">
                 <template v-slot:default="{ item }">
                   <!-- <v-row dense> -->
                   <!-- <v-col v-for="attr in items" :key="attr.raw.contentId" cols="12"> -->
@@ -578,8 +578,8 @@ const toggleList = () => {
             ></v-text-field>
           </v-col>
           <div>
+            <h5>{{ tripDateFormat }}</h5>
             <v-btn @click="openModal">여행 일정 선택</v-btn>
-            <h4>{{ tripDateFormat }}</h4>
 
             <v-dialog v-model="caldialog" max-width="800px">
               <v-card>
@@ -635,7 +635,7 @@ const toggleList = () => {
             </v-dialog>
           </div>
 
-          <v-virtual-scroll :items="sample_myloc" height="600">
+          <v-virtual-scroll :items="sample_myloc" height="500">
             <template v-slot:default="{ item }">
               <v-card>
                 <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
@@ -665,11 +665,11 @@ const toggleList = () => {
               </v-card>
             </template>
           </v-virtual-scroll>
-          <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
-            여행생성
-          </v-btn>
         </v-container>
       </v-card>
+      <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
+        여행생성
+      </v-btn>
       <v-list-item @click="toggleList" class="slide-btn">
         <h6>일정</h6>
 
@@ -680,40 +680,55 @@ const toggleList = () => {
         </v-list-item-action>
       </v-list-item>
       <!-- Content area -->
-      <v-expand-x-transition style="width: 200%">
+      <v-expand-x-transition style="width: 300%">
         <v-card v-show="isListOpen" class="slide">
           <v-card-text>
             <!-- Your content goes here -->
             <p>여행 일정</p>
-            <v-virtual-scroll :items="tripsample" height="600">
-              <template v-slot:default="{ item: row, index: rowIndex }">
-                <v-virtual-scroll :items="row" class="horizontal-scroll">
-                  <template v-slot:default="{ item, index }">
-                    <v-card class="item-card">
-                      <v-avatar class="ma-3" size="100" rounded="0">
-                        <v-img :src="item.firstImage"></v-img>
-                      </v-avatar>
+            <v-list
+              style="overflow-x: auto; white-space: nowrap"
+              width="100%"
+              height="600"
+            >
+              <v-list-item
+                v-for="(list, index) in tripview"
+                height="500"
+                width="300"
+                style="display: inline-block"
+              >
+                <v-list-item-title> {{ index + 1 }}일차 </v-list-item-title>
+                <v-list style="overflow-y: scroll" height="500">
+                  <v-list-item v-for="item in list">
+                    <v-card>
+                      <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
                       <div>
-                        <v-card-title class="text-h6">{{
-                          item.title
-                        }}</v-card-title>
-                        <v-card-subtitle>{{ item.address }}</v-card-subtitle>
-                        <v-card-actions>
-                          <v-btn
-                            class="ms-2"
-                            variant="outlined"
-                            size="small"
-                            @click="deleteMyLocation(rowIndex, index)"
-                          >
-                            X
-                          </v-btn>
-                        </v-card-actions>
+                        <v-avatar class="ma-3" size="100" rounded="0">
+                          <v-img :src="item.firstImage"></v-img>
+                        </v-avatar>
+                        <div>
+                          <v-card-title class="text-h6">
+                            {{ item.title }}
+                          </v-card-title>
+
+                          <v-card-subtitle>{{ item.address }}</v-card-subtitle>
+
+                          <v-card-actions>
+                            <v-btn
+                              class="ms-2"
+                              variant="outlined"
+                              size="small"
+                              @click="deleteMyLocation(i)"
+                            >
+                              X
+                            </v-btn>
+                          </v-card-actions>
+                        </div>
                       </div>
                     </v-card>
-                  </template>
-                </v-virtual-scroll>
-              </template>
-            </v-virtual-scroll>
+                  </v-list-item>
+                </v-list>
+              </v-list-item>
+            </v-list>
           </v-card-text>
         </v-card>
       </v-expand-x-transition>
@@ -734,7 +749,7 @@ const toggleList = () => {
   right: 0;
   transform: translateX(100%);
   z-index: 5;
-  background-color: rgba(241, 239, 239, 0.682);
+  background-color: rgba(241, 239, 239, 0.781);
   border-radius: 0px 20px 20px 0px;
 }
 .slide {
@@ -744,13 +759,5 @@ const toggleList = () => {
   transform: translateX(100%);
   z-index: 3;
   border-radius: 20px;
-}
-.horizontal-scroll {
-  display: flex;
-  overflow-x: auto;
-}
-
-.item-card {
-  min-width: 200px; /* Set the minimum width of each item card */
 }
 </style>
