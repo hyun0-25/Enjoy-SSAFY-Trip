@@ -13,7 +13,6 @@
       <SearchBar
         @search-event="getSearchArticles"
         :options="[
-          { value: 'nickname', text: '작성자' },
           { value: 'title', text: '제목' },
           { value: 'subject', text: '내용' },
         ]"
@@ -24,10 +23,17 @@
       v-model:page="page"
       :headers="headers"
       :items="articles"
+      item-key="boardId"
       :items-per-page="itemsPerPage"
       :loading="loading"
       loading-text="Loading... Please wait"
     >
+      <!-- <template v-slot:item="{ item }">
+        <tr @click="handleRowClick(item)"></tr>
+        <div>
+          {{ item.boardId }}
+        </div>
+      </template> -->
       <template v-slot:bottom>
         <div class="text-center pt-2">
           <v-pagination
@@ -38,6 +44,9 @@
         </div>
       </template>
     </v-data-table>
+    <RouterLink :to="{ name: 'notice-write' }"
+      ><v-btn class="button">글쓰기</v-btn></RouterLink
+    >
   </v-card>
 </template>
 <script setup>
@@ -49,6 +58,7 @@ import { ref, computed } from "vue";
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
 const loading = ref(true);
+const router = useRouter();
 
 //2.반응형 데이터 연결하기
 const articles = computed(() => boardStore.articles);
@@ -89,4 +99,15 @@ const headers = ref([
 const pageCount = computed(() =>
   Math.ceil(articles.value.length / itemsPerPage.value)
 );
+
+// 리스트를 눌러 해당 요소의 상세 페이지 이동
+const goDetail = () => {
+  // router.push("/board/notice/"+headers.value.title);
+};
 </script>
+<style scoped>
+.button {
+  text-decoration: none;
+  color: black;
+}
+</style>
