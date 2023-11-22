@@ -1,17 +1,22 @@
 <script setup>
 import { onMounted, ref, computed, watch } from "vue";
 import draggable from "vuedraggable";
-
+import { useRouter, useRoute } from "vue-router";
+import VSelect from "@/components/select/VSelect.vue";
+import TripSearchBar from "../components/searchbar/TripSearchBar.vue";
 //1.store 객체 얻어오기
 import { useAttractionStore } from "../store/attraction";
+import { useMyLocationStore } from "../store/mylocation";
+const router = useRouter();
+const route = useRoute();
 const attractionStore = useAttractionStore();
 
 //2.반응형 데이터 연결하기
 const attractions = computed(() => attractionStore.attractions);
 
 const params = ref({
-  sido: 1, //시도
-  gugun: 1, //구군
+  sido: 0, //시도
+  gugun: 0, //구군
 });
 
 const sample = ref([
@@ -320,6 +325,50 @@ const sample = ref([
 //목록 조회
 attractionStore.getAttractions(params.value);
 
+const sidoList = ref([]);
+const sidos = computed(() => attractionStore.sidos);
+
+const getSidoList = () => {
+  let options = [];
+  options.push({ text: "시도선택", value: "" });
+  sidos.value.forEach((sido) => {
+    options.push({ text: sido.sidoName, value: sido.sidoCode });
+  });
+  sidoList.value = options;
+};
+
+const init = async () => {
+  //목록 조회
+  await attractionStore.listSido();
+  getSidoList();
+};
+init();
+
+const gugunList = ref([{ text: "구군선택", value: "" }]);
+
+const guguns = computed(() => attractionStore.guguns);
+const onChangeSido = async (val) => {
+  await attractionStore.listGugun({ sido: val });
+  getGugunList();
+};
+
+const getGugunList = () => {
+  let options = [];
+  options.push({ text: "구군선택", value: "" });
+  guguns.value.forEach((gugun) => {
+    options.push({ text: gugun.gugunName, value: gugun.gugunCode });
+  });
+  gugunList.value = options;
+};
+
+const onChangeGugun = (val) => {
+  params.value.sido = val;
+  params.value.gugun = val;
+  console.log(params.value);
+  // getChargingStations();
+  attractionStore.getAttractions(params.value);
+};
+
 //////////////////////////////////////////////////////////////////////
 //지도
 const container = ref(null); //<div id="map"> 엘리먼트 객체
@@ -402,7 +451,7 @@ const MaxDate = ref(null);
 watch(PickstartDate, () => {
   var sdate = new Date(PickstartDate.value);
   console.log(sdate);
-  var mdate = new Date(sdate.setDate(sdate.getDate() + 7));
+  var mdate = new Date(sdate.setDate(sdate.getDate() + 6));
   MaxDate.value = mdate;
   // console.log(MaxDate.value);
   if (PickstartDate.value != null) {
@@ -423,36 +472,34 @@ const startDateFormat = ref("");
 const endDateFormat = ref("");
 const tripDateFormat = ref("일정을 선택해주세요");
 
-const tripsample = ref([]);
 const tripview = ref([]);
+
 //최대 사이즈
 const size = ref(0);
 //진짜 사이즈
 const listsize = ref(0);
 const confirm = () => {
-  if (size.value == 0) {
+  if (
+    size.value == 0 &&
+    PickstartDate.value != null &&
+    PickendDate.value != null
+  ) {
     size.value = listsize.value =
       PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
-    // console.log(size.value);
-    // console.log(listsize.value);
-    // tripsample.value = Array.from(Array(size), () => new Array());
-    // tripsample.value = Array.from(Array(size), () => sample.value);
     for (var i = 0; i < size.value; i++) {
-      tripsample.value.push(sample.value);
-      // tripsample.value.push(new Array());
+      tripview.value.push(new Array());
     }
-  } else {
+  } else if (PickstartDate.value != null && PickendDate.value != null) {
     var addsize =
       PickendDate.value.getDate() -
       PickstartDate.value.getDate() +
       1 -
-      size.value;
+      listsize.value;
     if (addsize > 0) {
       size.value = listsize.value =
         PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
       for (var i = 0; i < addsize; i++) {
-        tripsample.value.push(sample.value);
-        // tripsample.value.push(new Array());
+        tripview.value.push(new Array());
       }
     } else {
       listsize.value =
@@ -468,13 +515,8 @@ const confirm = () => {
     startDateFormat.value = startDate.value.toISOString().slice(0, 10);
     endDateFormat.value = endDate.value.toISOString().slice(0, 10);
     tripDateFormat.value = startDateFormat.value + " ~ " + endDateFormat.value;
-
-    console.log("크기");
-    console.log(size.value);
-    console.log(listsize.value);
-
-    tripview.value = tripsample.value.slice(0, listsize.value);
-    console.log(tripview.value);
+    //view에 보일 일정
+    tripview.value = tripview.value.slice(0, listsize.value);
   }
 };
 
@@ -482,9 +524,71 @@ const openModal = () => {
   caldialog.value = true;
 };
 
+const deletetrip = (idx, index) => {
+  tripview.value[idx].splice(index, index + 1);
+};
+
 const trip_title = ref("");
 
-const addAllMyLocation = () => {};
+const mylocationStore = useMyLocationStore();
+
+const listForm = ref([]);
+
+const writeForm = ref({
+  contentId: 0,
+  courseName: "",
+  userId: "ssafy",
+  startDate: "",
+  endDate: "",
+  courseOrder: 0,
+  order: 0,
+});
+
+const addAllMyLocation = async () => {
+  if (PickstartDate.value == null || PickendDate.value == null) {
+    alert("일정을 선택해주세요!");
+    return;
+  }
+  console.log(tripview.value);
+  for (let i = 0; i < tripview.value.length; i++) {
+    if (tripview.value[i].length == 0) {
+      alert("하루에 최소 1개 일정을 추가해주세요!");
+      return;
+    }
+  }
+  if (trip_title.value == "" || tripview.value == []) {
+    alert("여행명을 입력해주세요!");
+    return;
+  }
+  //else
+
+  // writeForm.value.courseName = trip_title.value;
+  // writeForm.value.startDate = startDateFormat.value;
+  // writeForm.value.endDate = endDateFormat.value;
+  for (var i = 0; i < tripview.value.length; i++) {
+    for (var j = 0; j < tripview.value[i].length; j++) {
+      var writeForm = {
+        contentId: tripview.value[i][j].contentId,
+        courseName: trip_title.value,
+        userId: "ssafy",
+        startDate: startDateFormat.value,
+        endDate: endDateFormat.value,
+        courseOrder: i,
+        order: j,
+      };
+      listForm.value.push(writeForm);
+    }
+  }
+  console.log("보낼 결과");
+  console.log(listForm.value);
+  try {
+    await mylocationStore.addMyLocations(listForm.value);
+    router.push({ path: "/map" });
+  } catch (error) {
+    console.log("등록 에러 내용:", error);
+    alert("등록 실패");
+  }
+};
 
 const isListOpen = ref(false);
 
@@ -504,12 +608,21 @@ const toggleList = () => {
 <template>
   <div style="display: flex">
     <div style="width: 20%" v-show="!isListOpen">
+      <div>
+        <TripSearchBar @search-event="getSearchArticles"></TripSearchBar>
+        <div>
+          <VSelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
+        </div>
+        <div>
+          <VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
+        </div>
+      </div>
       <v-expand-x-transition>
         <v-card>
           <v-card class="mx-auto">
             <v-container>
-              <v-virtual-scroll :items="sample" height="600">
-                <template v-slot:default="{ item }">
+              <v-list height="600">
+                <v-list-item v-for="item in attractions">
                   <!-- <v-row dense> -->
                   <!-- <v-col v-for="attr in items" :key="attr.raw.contentId" cols="12"> -->
                   <v-card>
@@ -543,9 +656,8 @@ const toggleList = () => {
                       </div>
                     </div>
                   </v-card>
-                </template>
-              </v-virtual-scroll>
-
+                </v-list-item>
+              </v-list>
               <v-dialog v-model="dialog" width="50vw">
                 <v-card>
                   <v-avatar class="ma-3" size="150" rounded="0">
@@ -579,7 +691,9 @@ const toggleList = () => {
           </v-col>
           <div>
             <h5>{{ tripDateFormat }}</h5>
-            <v-btn @click="openModal">여행 일정 선택</v-btn>
+            <v-btn @click="openModal" style="margin-bottom: 5px"
+              >여행 일정 선택</v-btn
+            >
 
             <v-dialog v-model="caldialog" max-width="800px">
               <v-card>
@@ -635,36 +749,40 @@ const toggleList = () => {
             </v-dialog>
           </div>
 
-          <v-virtual-scroll :items="sample_myloc" height="500">
-            <template v-slot:default="{ item }">
-              <v-card>
-                <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
-                <div>
-                  <v-avatar class="ma-3" size="100" rounded="0">
-                    <v-img :src="item.firstImage"></v-img>
-                  </v-avatar>
-                  <div>
-                    <v-card-title class="text-h6">
-                      {{ item.title }}
-                    </v-card-title>
+          <v-list height="500" style="overflow-y: auto">
+            <draggable v-model="sample_myloc" item-key="id" group="items">
+              <template #item="{ element }">
+                <div class="drag-item">
+                  <!-- {{ element.content }} -->
+                  <v-card>
+                    <div>
+                      <v-avatar class="ma-3" size="100" rounded="0">
+                        <v-img :src="element.firstImage"></v-img>
+                      </v-avatar>
+                      <div>
+                        <v-card-title class="text-h6">
+                          {{ element.title }}
+                        </v-card-title>
 
-                    <v-card-subtitle>{{ item.address }}</v-card-subtitle>
+                        <v-card-subtitle>{{ element.address }}</v-card-subtitle>
 
-                    <v-card-actions>
-                      <v-btn
-                        class="ms-2"
-                        variant="outlined"
-                        size="small"
-                        @click="deleteMyLocation(item)"
-                      >
-                        X
-                      </v-btn>
-                    </v-card-actions>
-                  </div>
+                        <v-card-actions>
+                          <v-btn
+                            class="ms-2"
+                            variant="outlined"
+                            size="small"
+                            @click="deleteMyLocation(element)"
+                          >
+                            X
+                          </v-btn>
+                        </v-card-actions>
+                      </div>
+                    </div>
+                  </v-card>
                 </div>
-              </v-card>
-            </template>
-          </v-virtual-scroll>
+              </template>
+            </draggable>
+          </v-list>
         </v-container>
       </v-card>
       <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
@@ -672,6 +790,7 @@ const toggleList = () => {
       </v-btn>
       <v-list-item @click="toggleList" class="slide-btn">
         <h6>일정</h6>
+        <h6>생성</h6>
 
         <v-list-item-action>
           <v-icon>{{
@@ -691,41 +810,50 @@ const toggleList = () => {
               height="600"
             >
               <v-list-item
-                v-for="(list, index) in tripview"
+                v-for="(list, idx) in tripview"
                 height="500"
                 width="300"
                 style="display: inline-block"
               >
-                <v-list-item-title> {{ index + 1 }}일차 </v-list-item-title>
+                <v-list-item-title> {{ idx + 1 }}일차 </v-list-item-title>
                 <v-list style="overflow-y: scroll" height="500">
-                  <v-list-item v-for="item in list">
-                    <v-card>
-                      <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
-                      <div>
-                        <v-avatar class="ma-3" size="100" rounded="0">
-                          <v-img :src="item.firstImage"></v-img>
-                        </v-avatar>
+                  <draggable
+                    v-model="tripview[idx]"
+                    item-key="id"
+                    group="items"
+                  >
+                    <template #item="{ index, element }">
+                      <v-card>
                         <div>
-                          <v-card-title class="text-h6">
-                            {{ item.title }}
-                          </v-card-title>
+                          <v-avatar class="ma-3" size="100" rounded="0">
+                            <v-img :src="element.firstImage"></v-img>
+                          </v-avatar>
+                          <div>
+                            <!-- {{ idx }}
+                            {{ index }} -->
+                            <v-card-title class="text-h6">
+                              {{ element.title }}
+                            </v-card-title>
 
-                          <v-card-subtitle>{{ item.address }}</v-card-subtitle>
+                            <v-card-subtitle>{{
+                              element.address
+                            }}</v-card-subtitle>
 
-                          <v-card-actions>
-                            <v-btn
-                              class="ms-2"
-                              variant="outlined"
-                              size="small"
-                              @click="deleteMyLocation(i)"
-                            >
-                              X
-                            </v-btn>
-                          </v-card-actions>
+                            <v-card-actions>
+                              <v-btn
+                                class="ms-2"
+                                variant="outlined"
+                                size="small"
+                                @click="deletetrip(idx, index)"
+                              >
+                                X
+                              </v-btn>
+                            </v-card-actions>
+                          </div>
                         </div>
-                      </div>
-                    </v-card>
-                  </v-list-item>
+                      </v-card>
+                    </template>
+                  </draggable>
                 </v-list>
               </v-list-item>
             </v-list>
@@ -745,7 +873,7 @@ const toggleList = () => {
 <style scoped>
 .slide-btn {
   position: absolute;
-  top: 50%;
+  top: 45%;
   right: 0;
   transform: translateX(100%);
   z-index: 5;
@@ -759,5 +887,6 @@ const toggleList = () => {
   transform: translateX(100%);
   z-index: 3;
   border-radius: 20px;
+  margin: 10px 0px 10px 10px;
 }
 </style>
