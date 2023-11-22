@@ -5,6 +5,7 @@ import { useBoardStore } from "@/store/board";
 import { useCommentStore } from "@/store/comment";
 import { useAuthStore } from "@/store/auth";
 
+const authStore = useAuthStore();
 const boardStore = useBoardStore();
 const article = computed(() => boardStore.article); //store 데이터를 반응형으로 가져오기
 
@@ -37,7 +38,7 @@ const cancel = async () => {
 //로그인 유저정보
 // const authStore = useAuthStore();
 // const userId = computed(() => authStore.user.userId);
-const userId = "ssafy";
+const userId = authStore.user.userId;
 console.log(userId);
 
 const commentStore = useCommentStore();
@@ -176,8 +177,12 @@ const validateCheck = () => {
                 >뒤로가기</v-btn
               >
               <!-- 수정 화면 이동 -->
-              <!-- 로그인 유저정보랑 같은 경우만 수정,삭제 버튼 생김-->
-              <div v-if="userId === article.userId">
+              <!-- 로그인 유저정보랑 같은 경우만 수정,삭제 버튼 생김. role(관리자)이면 수정,삭제 생김-->
+              <div
+                v-if="
+                  userId === article.userId || authStore.user.role == 'admin'
+                "
+              >
                 <RouterLink
                   :to="{
                     name: 'board-modify',
@@ -202,7 +207,7 @@ const validateCheck = () => {
         </v-row>
       </v-container>
     </v-main>
-
+    <!-- comment start -->
     <v-container v-if="article.boardType === 'hot'">
       <v-list two-line>
         <v-list-subheader>댓글</v-list-subheader>
@@ -217,7 +222,12 @@ const validateCheck = () => {
             }}</v-list-item-subtitle>
             <template v-if="index !== editedCommentIndex">
               <v-list-item-subtitle>{{ comment.content }}</v-list-item-subtitle>
-              <div v-if="comment.userId === userId">
+              <!-- 권한 설정 -->
+              <div
+                v-if="
+                  comment.userId === userId || authStore.user.role == 'admin'
+                "
+              >
                 <v-btn style="margin-bottom: 10px" @click="modifyComment(index)"
                   >수정</v-btn
                 >

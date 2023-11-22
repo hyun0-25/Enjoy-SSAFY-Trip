@@ -3,6 +3,30 @@ import { ref } from "vue";
 
 const tab = ref(null);
 const search = ref("");
+const tabType = ref(["전체", "모집중", "모집완료"]);
+const sorting = ref(["최신순", "출발일순", "좋아요순"]);
+const boardInfo = ref([
+  {
+    type: "1",
+    title: "1",
+    content: "1",
+  },
+  {
+    type: "12",
+    title: "12",
+    content: "12",
+  },
+  {
+    type: "13",
+    title: "13",
+    content: "13",
+  },
+  {
+    type: "14",
+    title: "14",
+    content: "14",
+  },
+]);
 </script>
 
 <template>
@@ -22,17 +46,18 @@ const search = ref("");
               <v-tabs
                 v-model="tab"
                 color="deep-purple-accent-4"
-                align-tabs="center"
+                align-tabs="head"
               >
-                <v-tab :value="1">전체</v-tab>
-                <v-tab :value="2">모집중</v-tab>
-                <v-tab :value="3">모집완료</v-tab>
+                <v-tab
+                  v-for="(item, index) in tabType"
+                  :key="index"
+                  :value="index"
+                  >{{ item }}</v-tab
+                >
               </v-tabs>
+
               <!-- 검색바 -->
-              <v-icon>fas fa-search</v-icon>
-              <v-text-field clearable label="Label" variant="outlined"
-                ><input type="text"
-              /></v-text-field>
+
               <v-container>
                 <v-card
                   class="pa-4"
@@ -47,30 +72,83 @@ const search = ref("");
                       v-model="search"
                       placeholder="관심 여행일정을 검색해보세요!"
                     ></v-text-field>
+                    <v-btn>검색</v-btn>
                   </v-toolbar>
                 </v-card>
               </v-container>
-
+              <!-- 정렬 키워드-->
+              <v-list>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      v-for="(item, index) in sorting"
+                      :key="index"
+                    >
+                      <v-btn> {{ item }}</v-btn>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
               <!-- 탭에 해당하는 것들 -->
               <v-window v-model="tab">
-                <v-window-item v-for="n in 3" :key="n" :value="n">
+                <v-window-item
+                  :value="index"
+                  v-for="(item, index) in tabType"
+                  :key="index"
+                >
                   <v-container fluid>
-                    <v-row>
-                      <v-col v-for="i in 6" :key="i" cols="12" md="4">
-                        <v-img
-                          :src="`https://picsum.photos/500/300?image=${
-                            i * n * 5 + 10
-                          }`"
-                          :lazy-src="`https://picsum.photos/10/6?image=${
-                            i * n * 5 + 10
-                          }`"
-                          aspect-ratio="1"
-                        ></v-img>
+                    <!-- 게시글 리스트 시작 -->
+                    <v-row align="center" justify="center">
+                      <v-col
+                        v-for="(info, i) in boardInfo"
+                        :key="i"
+                        cols="auto"
+                      >
+                        <v-card
+                          class="mx-auto"
+                          max-width="344"
+                          :info="outlined"
+                        >
+                          <v-card-item>
+                            <div>
+                              <div class="text-overline mb-1">
+                                전체/모집/마감
+                              </div>
+                              <div class="text-h6 mb-1">{{ info.title }}</div>
+                              <div class="text-caption">{{ info.content }}</div>
+                            </div>
+                          </v-card-item>
+
+                          <v-card-actions>
+                            <v-btn> Button </v-btn>
+
+                            <!-- 잡다한거 -->
+                            <v-btn value="recent">
+                              <v-icon>mdi-history</v-icon>
+
+                              <span>Recent</span>
+                            </v-btn>
+
+                            <v-btn value="favorites">
+                              <v-icon>mdi-heart</v-icon>
+
+                              <span>Favorites</span>
+                            </v-btn>
+
+                            <v-btn value="nearby">
+                              <v-icon>mdi-map-marker</v-icon>
+
+                              <span>Nearby</span>
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
                       </v-col>
                     </v-row>
+                    <!-- 게시글 리스트 끝 -->
                   </v-container>
                 </v-window-item>
               </v-window>
+              <!-- tap end  -->
             </v-card>
           </v-sheet>
         </v-col>
@@ -85,4 +163,9 @@ const search = ref("");
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+v-row {
+  /* margin: 0 auto; */
+  padding: 0;
+}
+</style>

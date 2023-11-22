@@ -38,9 +38,9 @@ const router = createRouter({
           component: () => import("@/components/boards/ContestBoardList.vue"),
         },
         {
-          path: "write",
-          name: "board-write",
-          component: () => import("@/components/boards/BoardWrite.vue"),
+          path: "/notice/write",
+          name: "notice-write",
+          component: () => import("@/components/boards/NoticeBoardWrite.vue"),
         },
         {
           path: "detail/:boardId",
