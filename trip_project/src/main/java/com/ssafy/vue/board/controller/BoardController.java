@@ -3,8 +3,10 @@ package com.ssafy.vue.board.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.vue.board.dto.BoardDto;
 import com.ssafy.vue.board.dto.BoardLikeDto;
 import com.ssafy.vue.board.dto.BoardListDto;
+import com.ssafy.vue.board.dto.FileInfoDto;
 import com.ssafy.vue.board.model.service.BoardService;
 
 import io.swagger.annotations.Api;
@@ -111,13 +114,30 @@ public class BoardController {
 //	public ResponseEntity<?> writeArticle(
 //			@RequestBody @ApiParam(value = "게시글 정보.", required = true) BoardDto boardDto) {
 	public ResponseEntity<?> writeArticle(
-			@RequestParam MultipartFile[] files, @ModelAttribute BoardDto boardDto) throws IllegalStateException, IOException {
+			@RequestParam(required = false) MultipartFile[] files, @ModelAttribute BoardDto boardDto) throws IllegalStateException, IOException {
 		log.info("writeArticle boardDto - {}", boardDto);
-		for(MultipartFile file : files ) {
-			System.out.println("파일 정보 : "+file);
-			file.transferTo(new File("C://ssafy/"+file.getOriginalFilename()));
+		List<FileInfoDto> fileInfoList = new ArrayList<>();
+		if(files != null) {
+			for(MultipartFile file : files ) {
+				System.out.println("파일 정보 : "+file);
+				String saveFolder = "C://ssafy/";
+				String originalFileName = file.getOriginalFilename();
+				String saveFileName = UUID.randomUUID() + "_" + originalFileName;
+				String filePath = saveFolder + saveFileName;
+				file.transferTo(new File(filePath));
+				
+				// FileInfoDto 생성 및 리스트에 추가
+	            FileInfoDto fileInfoDto = new FileInfoDto();
+	            fileInfoDto.setSaveFolder(saveFolder);
+	            fileInfoDto.setOriginalFile(originalFileName);
+	            fileInfoDto.setSaveFile(saveFileName);
+	            fileInfoList.add(fileInfoDto);
+			}
 		}
 		try {
+//			if(fileInfoList.size()>0) {
+				boardDto.setFileInfos(fileInfoList);
+//			}
 			boardService.writeArticle(boardDto);
 //			return ResponseEntity.ok().build();
 			return new ResponseEntity<Void>(HttpStatus.CREATED);
@@ -129,9 +149,27 @@ public class BoardController {
 	@ApiOperation(value = "게시판 글수정", notes = "수정할 게시글 정보를 입력한다. 그리고 DB수정 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@PutMapping("/{boardtype}/{boardid}")
 	public ResponseEntity<String> modifyArticle(
-			@RequestBody @ApiParam(value = "수정할 글정보.", required = true) BoardDto boardDto) throws Exception {
+			@RequestParam(required = false) MultipartFile[] files,@ModelAttribute BoardDto boardDto) throws Exception {
 		log.info("modifyArticle - 호출 {}", boardDto);
-
+		List<FileInfoDto> fileInfoList = new ArrayList<>();
+		if(files != null) {
+			for(MultipartFile file : files ) {
+				System.out.println("파일 정보 : "+file);
+				String saveFolder = "C://ssafy/";
+				String originalFileName = file.getOriginalFilename();
+				String saveFileName = UUID.randomUUID() + "_" + originalFileName;
+				String filePath = saveFolder + saveFileName;
+				file.transferTo(new File(filePath));
+				
+				// FileInfoDto 생성 및 리스트에 추가
+	            FileInfoDto fileInfoDto = new FileInfoDto();
+	            fileInfoDto.setSaveFolder(saveFolder);
+	            fileInfoDto.setOriginalFile(originalFileName);
+	            fileInfoDto.setSaveFile(saveFileName);
+	            fileInfoList.add(fileInfoDto);
+			}
+		}
+		boardDto.setFileInfos(fileInfoList);
 		boardService.modifyArticle(boardDto);
 		return ResponseEntity.ok().build();
 	}

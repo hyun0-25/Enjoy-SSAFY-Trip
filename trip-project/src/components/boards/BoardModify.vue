@@ -9,7 +9,8 @@ const router = useRouter();
 const route = useRoute();
 
 const modifyForm = ref({});
-
+const file = ref([]);
+const imgview = ref("");
 const setModifyInfo = async () => {
   //1. store의 article 데이터 세팅
   await boardStore.getModifyArticle(
@@ -18,6 +19,18 @@ const setModifyInfo = async () => {
   );
   //2. article 데이터를 통해 modifyForm 세팅
   modifyForm.value = { ...boardStore.modifyarticle };
+
+  if (modifyForm.value.fileInfos[0] != null) {
+    const fileinfo = modifyForm.value.fileInfos[0];
+    imgview.value = `http://localhost/images/${fileinfo.originalFile}`;
+  }
+  preview.value = imgview.value;
+  const response = await fetch(imgview.value);
+  const imageBlob = await response.blob();
+
+  // Create a File object from the Blob
+  const fileName = imgview.value.substring(imgview.value.lastIndexOf("/") + 1);
+  file.value[0] = new File([imageBlob], fileName, { type: imageBlob.type });
 };
 
 setModifyInfo();
@@ -30,7 +43,17 @@ const modify = async () => {
   if (valid) {
     try {
       if (!confirm("이대로 수정하시겠습니까?")) return;
-      await boardStore.modifyArticle(modifyForm.value);
+      var formData = new FormData();
+      for (let i = 0; i < file.value.length; i++) {
+        formData.append("files", file.value[i]);
+      }
+      if (file.value.length == 0) {
+        formData.append("files", file.value);
+      }
+      formData.append("title", modifyForm.value.title);
+      formData.append("content", modifyForm.value.content);
+      formData.append("boardId", modifyForm.value.boardId);
+      await boardStore.modifyArticle(modifyForm, formData);
       router.push(`/board/detail/${modifyForm.value.boardId}`);
       alert("수정 성공");
     } catch (error) {
@@ -43,6 +66,30 @@ const modify = async () => {
 const cancel = async () => {
   if (!confirm("취소하시겠습니까?")) return;
   router.push({ path: `/board/detail/${modifyForm.value.boardId}` });
+};
+
+//파일 업로드
+// 상태 변수 정의
+const preview = ref("");
+
+// 메서드 정의
+const previewFile = () => {
+  const fileData = (data) => {
+    preview.value = data;
+  };
+  console.log(file.value[0]);
+
+  if (file.value[0]) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.value[0]);
+    reader.addEventListener(
+      "load",
+      function () {
+        fileData(reader.result);
+      },
+      false
+    );
+  }
 };
 </script>
 
@@ -70,6 +117,10 @@ const cancel = async () => {
                   style="width: 730px"
                   :rules="[(v) => !!v || '내용은 필수입니다.']"
                 ></v-textarea>
+                <v-col>
+                  <img :src="preview" />
+                  <v-file-input v-model="file" @change="previewFile" />
+                </v-col>
                 <v-btn
                   width="100px"
                   style="margin-bottom: 30px"

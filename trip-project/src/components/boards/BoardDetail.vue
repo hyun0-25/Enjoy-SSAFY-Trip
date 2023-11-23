@@ -11,8 +11,21 @@ const article = computed(() => boardStore.article); //store 데이터를 반응�
 
 const router = useRouter();
 const route = useRoute();
+const imgview = ref("");
+onMounted(async () => {
+  await boardStore.getArticle(route.params.boardType, route.params.boardId);
+  if (article.value.fileInfos[0] != null) {
+    const file = article.value.fileInfos[0];
+    imgview.value = `http://localhost/images/${file.saveFile}`;
+  }
+});
 
-boardStore.getArticle(route.params.boardType, route.params.boardId);
+// const getImageUrl = (file) => {
+//   // 이미지 파일의 경로를 반환하는 메서드
+//   // 실제 프로젝트에서는 이미지 서버 URL 또는 이미지를 저장한 경로를 사용해야 합니다.
+//   console.log(file.originalFile);
+//   return `http://localhost/images/${file.originalFile}`;
+// };
 
 const deleteArticle = async () => {
   try {
@@ -108,7 +121,7 @@ const cancelEdit = () => {
 //파일 업로드
 // 상태 변수 정의
 const preview = ref("");
-const file = ref(null);
+// const file = ref(null);
 
 console.log(article.value.fileInfos);
 // 메서드 정의
@@ -169,8 +182,7 @@ const validateCheck = () => {
                 v-model="article.content"
               ></v-textarea>
               <v-col>
-                이미지 미리보기
-                <img :src="preview" />
+                <img :src="imgview" />
               </v-col>
 
               <v-btn width="100px" style="margin-bottom: 30px" @click="cancel()"

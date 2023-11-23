@@ -42,27 +42,10 @@ public class BoardServiceImpl implements BoardService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("key", map.get("key") == null ? "" : map.get("key"));
 		param.put("word", map.get("word") == null ? "" : map.get("word"));
-//		int currentPage = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
-//		int sizePerPage = Integer.parseInt(map.get("spp") == null ? "20" : map.get("spp"));
-//		int start = currentPage * sizePerPage - sizePerPage;
-//		param.put("start", start);
-//		param.put("listsize", sizePerPage);
-
-//		String key = map.get("key");
-//		param.put("key", key == null ? "" : key);
-//		if ("user_id".equals(key))
-//			param.put("key", key == null ? "" : "b.user_id");
 		List<BoardDto> list = boardMapper.listArticle(param);
-
-//		if ("user_id".equals(key))
-//			param.put("key", key == null ? "" : "user_id");
-//		int totalArticleCount = boardMapper.getTotalArticleCount(param);
-//		int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
 
 		BoardListDto boardListDto = new BoardListDto();
 		boardListDto.setArticles(list);
-//		boardListDto.setCurrentPage(currentPage);
-//		boardListDto.setTotalPageCount(totalPageCount);
 
 		return boardListDto;
 	}
@@ -72,22 +55,12 @@ public class BoardServiceImpl implements BoardService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("key", map.get("key") == null ? "" : map.get("key"));
 		param.put("word", map.get("word") == null ? "" : map.get("word"));
-//		int currentPage = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
-//		int sizePerPage = Integer.parseInt(map.get("spp") == null ? "20" : map.get("spp"));
-//		int start = currentPage * sizePerPage - sizePerPage;
-//		param.put("start", start);
-//		param.put("listsize", sizePerPage);
 		param.put("type", boardType);
 
 		List<BoardDto> list = boardMapper.listTypeArticle(param);
 
-//		int totalArticleCount = boardMapper.getTotalArticleCount(param);
-//		int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
-
 		BoardListDto boardListDto = new BoardListDto();
 		boardListDto.setArticles(list);
-//		boardListDto.setCurrentPage(currentPage);
-//		boardListDto.setTotalPageCount(totalPageCount);
 
 		return boardListDto;
 	}
@@ -105,8 +78,22 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void modifyArticle(BoardDto boardDto) throws Exception {
+		//파일 지우고
+		List<FileInfoDto> fileList = boardMapper.fileInfoList(boardDto.getBoardId());
+		boardMapper.deleteFile(boardDto.getBoardId());
+		for(FileInfoDto fileInfoDto : fileList) {
+			File file = new File(File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
+			file.delete();
+		}
+		//다시 등록
+		List<FileInfoDto> fileInfos = boardDto.getFileInfos();
+		if (fileInfos != null && !fileInfos.isEmpty()) {
+			boardMapper.registerFile(boardDto);
+		}
+		
 		// TODO : BoardDaoImpl의 modifyArticle 호출
 		boardMapper.modifyArticle(boardDto);
+		
 	}
 
 	@Override
@@ -123,11 +110,6 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
-//	@Override
-//	public void deleteArticle(int boardId) throws Exception {
-//		// TODO : BoardDaoImpl의 deleteArticle 호출
-//		boardMapper.deleteArticle(boardId);
-//	}
 	
 	// comment
 	

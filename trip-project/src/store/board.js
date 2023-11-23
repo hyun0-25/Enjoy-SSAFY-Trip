@@ -38,9 +38,19 @@ export const useBoardStore = defineStore("board", () => {
   /* =======게시글 상세 End========== */
 
   /* =======게시글 등록 Start========== */
-  const writeArticle = async (writeForm) => {
-    console.log("writeArticle() 요청 데이터:", writeForm);
-    return await axios.post(`/api/board`, writeForm);
+  const writeArticle = async (formData) => {
+    console.log("writeArticle() 요청 데이터:", formData);
+    var type;
+    for (let key of formData.keys()) {
+      if (key == "boardType") {
+        type = formData.get(key);
+      }
+    }
+    return await axios.post(`/api/board/${type}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
   /* =======게시글 등록 End========== */
 
@@ -57,11 +67,16 @@ export const useBoardStore = defineStore("board", () => {
   /* =======게시글 정보 End========== */
 
   /* =======게시글 수정 Start========== */
-  const modifyArticle = async (modifyForm) => {
+  const modifyArticle = async (modifyForm, formData) => {
     console.log("modifyArticle() 요청 데이터:", modifyArticle);
     return await axios.put(
       `/api/board/${modifyForm.boardType}/${modifyForm.boardId}`,
-      modifyForm
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
   };
   /* =======게시글 수정 End========== */

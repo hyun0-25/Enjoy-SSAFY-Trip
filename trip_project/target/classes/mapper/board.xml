@@ -94,7 +94,7 @@
 	</select>
 	
 	<select id="fileInfoList" resultMap="file">
-		select save_folder, original_file, save_file
+		select image_id, save_folder, original_file, save_file
 		from image_info
 		where board_id = #{boardId}
 	</select>

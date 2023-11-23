@@ -11,8 +11,14 @@ const writeForm = ref({
   userId: authStore.user.userId,
   title: "",
   content: "",
+  boardType: "notice",
 });
+
+const formData = new FormData();
+console.log(formData);
 const form = ref(null);
+const file = ref([]);
+// const files = ref([]);
 //등록 요청 보내고 등록 성공 시 목록 페이지 이동
 const write = async () => {
   const { valid } = await form.value.validate();
@@ -21,7 +27,19 @@ const write = async () => {
     try {
       if (!confirm("이대로 등록하시겠습니까?")) return;
 
-      await boardStore.writeArticle(writeForm.value);
+      var formData = new FormData();
+      for (let i = 0; i < file.value.length; i++) {
+        formData.append("files", file.value[i]);
+      }
+      if (file.value.length == 0) {
+        formData.append("files", file.value);
+      }
+      formData.append("title", writeForm.value.title);
+      formData.append("content", writeForm.value.content);
+      // for (let key of formData.keys()) {
+      //   console.log(key, ":", formData.get(key));
+      // }
+      await boardStore.writeArticle(modifyForm, formData);
       router.push({ path: "/board/notice" });
       alert("등록 성공");
     } catch (error) {
@@ -40,14 +58,13 @@ const cancel = async () => {
 //파일 업로드
 // 상태 변수 정의
 const preview = ref("");
-const file = ref(null);
 
 // 메서드 정의
 const previewFile = () => {
   const fileData = (data) => {
     preview.value = data;
   };
-  // console.log(file.value[0].name);
+  console.log(file.value[0]);
 
   if (file.value[0]) {
     const reader = new FileReader();
