@@ -19,4 +19,5 @@ public interface MapMapper {
 	void writeMyLocation(List<MyLocationDto> mylocationlist) throws SQLException;
 	List<TripDto> mylocationList(String userId) throws SQLException;
 	List<MyLocationDto> courseList(int courseId) throws SQLException;
+	void deleteCourse(int courseId) throws SQLException;
 }

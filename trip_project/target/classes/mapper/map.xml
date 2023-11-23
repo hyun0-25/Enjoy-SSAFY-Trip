@@ -111,12 +111,20 @@
 		where course_id = #{courseId};
 	</select>
 	
+<<<<<<< HEAD
 	<select id="AllLocationList" parameterType="string" resultMap="trip">
 		select course_id, max(course_name) AS course_name, max(start_date) AS start_date, max(end_date) AS end_date
 		from mylocation
 		group by course_id 
         order by course_id desc;
 	</select>
+=======
+	<delete id="deleteCourse" parameterType="int">
+		delete
+		from mylocation
+		where course_id = #{courseId}
+	</delete>
+>>>>>>> 7960f77588c7654ddcb265d563042487d83fddd1
 	
 	
 	

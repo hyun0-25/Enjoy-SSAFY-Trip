@@ -50,6 +50,13 @@ export const useMyLocationStore = defineStore("mylocation", () => {
   };
   /* =======여행지 상세 End========== */
 
+  /* =======게시글 삭제 Start========== */
+  const deleteCourse = async (courseId) => {
+    console.log(`deleteCourse(${courseId}) 요청 보냄`);
+    await axios.delete(`/api/map/mylocation/${courseId}`);
+  };
+  /* =======게시글 삭제 End========== */
+
   return {
     addMyLocations,
     deleteAllMyLocation,
@@ -59,5 +66,6 @@ export const useMyLocationStore = defineStore("mylocation", () => {
     getCourseList,
     attraction,
     getAttraction,
+    deleteCourse,
   };
 });

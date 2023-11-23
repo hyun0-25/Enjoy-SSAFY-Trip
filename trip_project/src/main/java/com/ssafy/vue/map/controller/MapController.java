@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -113,6 +114,14 @@ public class MapController {
 		return new ResponseEntity<List<MyLocationDto>>(mapService.courseList(courseId), HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "유저 여행리스트 삭제", notes = "유저 여행리스트를 삭제한다. 그리고 DB삭제 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
+	@DeleteMapping("/mylocation/{courseId}")
+	public ResponseEntity<String> deleteCourse(
+			@PathVariable("courseId") @ApiParam(value = "여행경로 아이디", required = true) int courseId) throws Exception {
+		log.info("deleteCourse - 호출");
+		mapService.deleteCourse(courseId);
+		return ResponseEntity.ok().build();
+	}
 	
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();
