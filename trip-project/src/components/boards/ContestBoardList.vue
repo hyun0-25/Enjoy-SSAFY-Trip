@@ -14,6 +14,10 @@ const params = ref({
 
 //목록 조회
 boardStore.getArticles(params.value, "contest");
+
+const getimg = async () => {
+  await boardStore.getArticle("contest", route.params.boardId);
+};
 </script>
 
 <template>
