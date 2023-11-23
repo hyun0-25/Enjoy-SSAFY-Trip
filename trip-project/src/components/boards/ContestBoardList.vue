@@ -14,6 +14,13 @@ const params = ref({
 
 //목록 조회
 boardStore.getArticles(params.value, "contest");
+// 좋아요
+const good = ref(false);
+const like = (boardId) => {
+  good.value = !good.value;
+  if (good) boardStore.likeArticel("contest", boardId);
+  else boardStore.deleteLikeArticel("contest", boardId);
+};
 </script>
 
 <template>
@@ -57,8 +64,10 @@ boardStore.getArticles(params.value, "contest");
                 size="small"
                 color="surface-variant"
                 variant="text"
-                icon="mdi-share-variant"
+                icon="mdi-thumb-up"
+                @click="like(card.boardId)"
               ></v-btn>
+              {{ card.boardId }}
             </v-card-actions>
           </v-card>
         </v-col>

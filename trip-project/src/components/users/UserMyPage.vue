@@ -8,9 +8,6 @@ const router = useRouter();
 const authStore = useAuthStore();
 const mylocationStore = useMyLocationStore();
 
-const user = authStore.user.value;
-console.log(user);
-
 const linksA = [
   ["mdi-account-multiple-minus", "전체 사용자 목록"],
   ["mdi-send", "게시판"],
@@ -33,7 +30,11 @@ const moveToTrip = (n) => {
 };
 
 // 회원 탈퇴
-const deleteUser = () => {};
+const dialog2 = ref(false);
+const deathUser = async () => {
+  await authStore.deleteUser(authStore.user.userId);
+  router.push("/");
+};
 </script>
 
 <template>
@@ -102,26 +103,32 @@ const deleteUser = () => {};
                 ><v-divider></v-divider>
               </v-list-item>
             </v-list>
-            <v-divider></v-divider>
             <v-list rounded="lg">
-              <v-list-item
-                v-for="item in mylist"
-                :key="item.courseId"
-                link
-                :title="`${item.courseName}`"
-                @click="moveToTrip(item.courseId)"
-              >
-                <h5>여행일 : {{ item.startDate + " ~ " + item.endDate }}</h5>
-              </v-list-item>
-
               <v-divider class="my-2"></v-divider>
-
-              <v-list-item
-                color="grey-lighten-4"
-                link
-                title="탈퇴하기"
-                @click="deleteUser"
-              ></v-list-item>
+              <!-- 탈퇴하기 -->
+              <div class="text-center">
+                <v-list-item color="primary">
+                  탈퇴하기
+                  <v-dialog v-model="dialog2" activator="parent" width="auto">
+                    <v-card>
+                      <v-card-text>
+                        탈퇴하시면 되돌릴 수 없습니다.
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-col>
+                          <v-btn color="primary" block @click="dialog2 = false"
+                            >취소</v-btn
+                          ></v-col
+                        ><v-col>
+                          <v-btn color="primary" block @click="deathUser"
+                            >탈퇴</v-btn
+                          >
+                        </v-col>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-list-item>
+              </div>
             </v-list>
           </v-sheet>
           <!-- 사이드 리스트 end-->
@@ -129,9 +136,29 @@ const deleteUser = () => {};
         <!-- 사이드 end-->
         <!-- 본 페이지 -->
         <v-col>
-          <v-sheet min-height="70vh" rounded="lg">
-            <!-- 본 -->
-            test
+          <v-sheet min-height="70vh" rounded="lg"
+            >.
+            <v-row>
+              <!-- 본 -->
+              <v-col>
+                <v-card
+                  class="mx-auto"
+                  max-width="344"
+                  :info="outlined"
+                  v-for="item in mylist"
+                  :key="item.courseId"
+                  link
+                  :title="`${item.courseName}`"
+                  @click="moveToTrip(item.courseId)"
+                >
+                  <v-list-item>
+                    <h5>
+                      여행일 : {{ item.startDate + " ~ " + item.endDate }}
+                    </h5>
+                  </v-list-item>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-sheet>
         </v-col>
       </v-row>

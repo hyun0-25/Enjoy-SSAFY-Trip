@@ -29,6 +29,7 @@ const menu = ref(false);
 
 const saveDate = () => {
   birthday.value = date.value;
+  dialog.value = false;
 };
 const cancleMenu = () => {
   menu.value = false;
@@ -103,8 +104,6 @@ const modify = async () => {
           <v-btn @click="saveDate">확인</v-btn>
         </v-dialog>
       </div>
-
-      <v-date-picker></v-date-picker>
 
       <!-- 프로필 사진 -->
       <P>

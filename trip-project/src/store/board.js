@@ -88,6 +88,20 @@ export const useBoardStore = defineStore("board", () => {
   };
   /* =======게시글 삭제 End========== */
 
+  /* =======좋아요 등록 Start========== */
+  const likeArticel = async (boardType, boardId) => {
+    console.log(`likeArticel(${boardType}, ${boardId}) 요청 보냄`);
+    await axios.post(`/api/board/${boardType}/${boardId}/like`);
+  };
+  /* =======좋아요 등록 End========== */
+
+  /* =======좋아요 삭제 Start========== */
+  const deleteLikeArticel = async (boardType, boardId) => {
+    console.log(`deleteLikeArticel(${boardType}, ${boardId}) 요청 보냄`);
+    await axios.delete(`/api/board/${boardType}/${boardId}/like`);
+  };
+  /* =======좋아요 삭제 End========== */
+
   return {
     articles,
     getArticles,
@@ -98,5 +112,7 @@ export const useBoardStore = defineStore("board", () => {
     deleteArticle,
     getModifyArticle,
     modifyarticle,
+    likeArticel,
+    deleteLikeArticel,
   };
 });
