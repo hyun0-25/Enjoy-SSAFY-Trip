@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+
 import com.ssafy.vue.member.dto.MemberDto;
 
 import io.jsonwebtoken.Claims;
@@ -11,6 +13,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+@Component
 public class JWTUtil {
 
 	private static final String SECRET_KEY = "ssafy"; // 시크릿 키, 토큰 생성과 검증 시 필요
