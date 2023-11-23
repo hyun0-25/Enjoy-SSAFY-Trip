@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { useAuthStore } from "@/store/auth";
 import { useDate } from "vuetify";
 
