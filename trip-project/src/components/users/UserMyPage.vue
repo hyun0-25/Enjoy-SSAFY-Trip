@@ -11,9 +11,6 @@ const mylocationStore = useMyLocationStore();
 const user = authStore.user.value;
 console.log(user);
 
-const cards = ["Today", "Yesterday"];
-const links = ["Dashboard", "Messages", "Profile", "Updates"];
-
 const linksA = [
   ["mdi-account-multiple-minus", "전체 사용자 목록"],
   ["mdi-send", "게시판"],

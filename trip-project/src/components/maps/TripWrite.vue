@@ -7,9 +7,11 @@ import TripSearchBar from "@/components/searchbar/TripSearchBar.vue";
 //1.store 객체 얻어오기
 import { useAttractionStore } from "@/store/attraction";
 import { useMyLocationStore } from "@/store/mylocation";
+import { useAuthStore } from "@/store/auth";
 const router = useRouter();
 const route = useRoute();
 const attractionStore = useAttractionStore();
+const authStore = useAuthStore();
 
 //2.반응형 데이터 연결하기
 const attractions = computed(() => attractionStore.attractions);
@@ -352,7 +354,7 @@ const addAllMyLocation = async () => {
       var writeForm = {
         contentId: tripview.value[i][j].contentId,
         courseName: trip_title.value,
-        userId: "ssafy",
+        userId: authStore.user.userId,
         startDate: startDateFormat.value,
         endDate: endDateFormat.value,
         courseOrder: i,
