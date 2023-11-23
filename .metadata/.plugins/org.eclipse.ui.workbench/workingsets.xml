@@ -10,5 +10,9 @@
 <item elementID="=trip_project/.apt_generated_tests=/optional=/true=/=/test=/true=/" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1700624605419_2" label="Window Working Set" name="Aggregate for window 1700624605419"/>
+<<<<<<< HEAD
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1700700569609_3" label="Window Working Set" name="Aggregate for window 1700486222757"/>
+=======
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1700701677757_3" label="Window Working Set" name="Aggregate for window 1700486222757"/>
+>>>>>>> 8ff640816d9df3165ff3db23474b53a405b017d6
 </workingSetManager>

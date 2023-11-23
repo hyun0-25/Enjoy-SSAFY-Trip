@@ -3,17 +3,6 @@ import { ref } from "vue";
 import axios from "axios";
 
 export const useMyLocationStore = defineStore("mylocation", () => {
-  // /* =======여행 경로 목록 Start========== */
-  // const articles = ref([]); //목록 데이터
-  // const getMyLocations = async (params, boardType) => {
-  //   const { data } = await axios.get(`/api/board/${boardType}`, {
-  //     params: params,
-  //   });
-  //   console.log("getMyLocations(params) 응답데이터:", data);
-  //   articles.value = data.articles;
-  // };
-  // /* =======여행 경로 목록 End========== */
-
   /* =======여행 경로 등록 Start========== */
   const addMyLocations = async (listForm) => {
     console.log("addMyLocations() 요청 데이터:", listForm);
@@ -29,8 +18,46 @@ export const useMyLocationStore = defineStore("mylocation", () => {
   };
   /* =======여행 경로 삭제 End========== */
 
+  /* =======내 여행 목록 Start========== */
+  const mylist = ref([]); //목록 데이터
+
+  const getMyList = async (params) => {
+    const { data } = await axios.get(`/api/map/mylist`, {
+      params: params,
+    });
+    console.log("getMyList(params) 응답데이터:", data);
+    mylist.value = data;
+  };
+  /* =======내 여행 목록 End========== */
+
+  /* =======여행 경로 목록 Start========== */
+  const courseList = ref([]); //목록 데이터
+
+  const getCourseList = async (courseId) => {
+    const { data } = await axios.get(`/api/map/mylocation//${courseId}`);
+    console.log("getCourseList(courseId) 응답데이터:", data);
+    courseList.value = data;
+  };
+  /* =======여행 경로 목록 End========== */
+
+  /* =======여행지 상세 Start========== */
+  const attraction = ref({});
+
+  const getAttraction = async (contentId) => {
+    const { data } = await axios.get(`/api/map/${contentId}`);
+    console.log(`getAttraction(${contentId}) 요청 응답: `, data);
+    attraction.value = data;
+  };
+  /* =======여행지 상세 End========== */
+
   return {
     addMyLocations,
     deleteAllMyLocation,
+    mylist,
+    getMyList,
+    courseList,
+    getCourseList,
+    attraction,
+    getAttraction,
   };
 });

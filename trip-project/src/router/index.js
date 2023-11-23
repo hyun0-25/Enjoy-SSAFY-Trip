@@ -70,22 +70,22 @@ const router = createRouter({
       component: TheUserView,
       children: [
         {
-          path: "/login",
+          path: "login",
           name: "user-login",
           component: () => import("@/components/users/UserLogin.vue"),
         },
         {
-          path: "/join",
+          path: "join",
           name: "user-join",
           component: () => import("@/components/users/UserRegister.vue"),
         },
         {
-          path: "/mypage",
+          path: "mypage",
           name: "user-mypage",
           component: () => import("@/components/users/UserMyPage.vue"),
         },
         {
-          path: "/adminpage",
+          path: "adminpage",
           name: "user-admin-page",
           component: () => import("@/components/users/AdminPage.vue"),
         },
@@ -95,6 +95,18 @@ const router = createRouter({
       path: "/map",
       name: "map",
       component: TheKakaoMap,
+      children: [
+        {
+          path: "write",
+          name: "trip-write",
+          component: () => import("@/components/maps/TripWrite.vue"),
+        },
+        {
+          path: "detail/:courseId",
+          name: "trip-detail",
+          component: () => import("@/components/maps/TripDetail.vue"),
+        },
+      ],
     },
   ],
 });

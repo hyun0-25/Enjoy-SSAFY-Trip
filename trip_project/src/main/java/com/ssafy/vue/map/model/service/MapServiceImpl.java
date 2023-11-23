@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.vue.map.dto.AttractionDto;
 import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
+import com.ssafy.vue.map.dto.TripDto;
 import com.ssafy.vue.map.model.mapper.MapMapper;
 
 @Service
@@ -48,6 +49,16 @@ public class MapServiceImpl implements MapService {
 	@Override
 	public void writeMyLocation(List<MyLocationDto> mylocationlist) throws Exception {
 		mapMapper.writeMyLocation(mylocationlist);
+	}
+
+	@Override
+	public List<TripDto> mylocationList(String userId) throws Exception {
+		return mapMapper.mylocationList(userId);
+	}
+
+	@Override
+	public List<MyLocationDto> courseList(int courseId) throws Exception {
+		return mapMapper.courseList(courseId);
 	}
 
 }
