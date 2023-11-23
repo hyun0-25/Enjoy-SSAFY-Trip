@@ -8,12 +8,6 @@ const authStore = useAuthStore();
 <template>
   <div></div>
   <router-view></router-view>
-  <!-- <template v-if="authStore.user.role === 관리자">
-    <AdminPage></AdminPage>
-  </template>
-  <template v-else>
-    <UserMyPage></UserMyPage>
-  </template> -->
 </template>
 
 <style scoped></style>
