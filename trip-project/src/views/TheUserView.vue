@@ -6,9 +6,7 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <div>
-    <div>개인페이지</div>
-  </div>
+  <div></div>
   <router-view></router-view>
   <!-- <template v-if="authStore.user.role === 관리자">
     <AdminPage></AdminPage>

@@ -1,61 +1,148 @@
 <script setup>
 import { ref } from "vue";
+import { useAuthStore } from "@/store/auth";
+import UserModify from "./UserModify.vue";
+const authStore = useAuthStore();
+
+const user = authStore.user.value;
+console.log(user);
 
 const cards = ["Today", "Yesterday"];
+const links = ["Dashboard", "Messages", "Profile", "Updates"];
+
 const linksA = [
-  ["mdi-inbox-arrow-down", "Inbox"],
-  ["mdi-send", "Send"],
-  ["mdi-delete", "Trash"],
-  ["mdi-alert-octagon", "Spam"],
-];
-const links = [
-  ["mdi-inbox-arrow-down", "전체 사용자 목록"],
+  ["mdi-account-multiple-minus", "전체 사용자 목록"],
   ["mdi-send", "게시판"],
 ];
-
 const drawer = ref(null);
+
+// 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
+const dialog = ref(false);
 </script>
 
 <template>
-  <div>
-    <v-navigation-drawer v-model="drawer">
-      <v-sheet color="grey-lighten-4" class="pa-4">
-        <v-avatar class="mb-4" color="grey-darken-1" size="64"></v-avatar>
-        <div>john@google.com</div>
-      </v-sheet>
+  <div class="bg-grey-lighten-3">
+    <v-container id="container">
+      <v-row id="warp">
+        <!-- 사이드 start-->
+        <v-col cols="2" id="side-style">
+          <!-- 프로필 -->
+          <v-sheet color="grey-lighten-4" class="pa-4" rounded="lg">
+            <v-row id="profile">
+              <v-col :cols="3" :style="{ padding: '0' }">
+                <v-avatar class="mb-4" color="grey-darken-1" size="64">
+                  <p>사진</p>
+                </v-avatar>
+              </v-col>
+              <v-col :style="{ padding: '0' }">
+                <v-list style="background-color: transparent">
+                  <v-list-item>
+                    <!-- 이용자 정보 -->
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >{{ authStore.user.userNickname }} ({{
+                          authStore.user.userId
+                        }})</v-list-item-title
+                      >
+                      <v-list-item-subtitle>{{
+                        authStore.user.email
+                      }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <!-- 수정 버튼 -->
+                    <v-list-item-action class="right">
+                      <v-spacer></v-spacer>
+                      <v-dialog icon v-model="dialog" width="600">
+                        <template v-slot:activator="{ on, attrs }">
+                          <a
+                            v-on:click="() => (dialog = !dialog)"
+                            v-bind="attrs"
+                            ><v-icon class="custom-icon">mdi-pencil</v-icon></a
+                          >
+                        </template>
+                        <UserModify v-if="dialog"></UserModify>
+                      </v-dialog>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+              {{ user }}
+            </v-row>
+            <div>가입일 : {{ authStore.user.email }}</div>
+          </v-sheet>
 
-      <v-divider></v-divider>
+          <v-divider></v-divider>
 
-      <v-list>
-        <v-list-item
-          v-for="[icon, text] in links"
-          :key="icon"
-          :prepend-icon="icon"
-          :title="text"
-          link
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+          <!-- end 프로필 -->
+          <!-- 사이드 리스트 start-->
 
-    <v-container class="py-8 px-6" fluid>
-      <v-row>
-        <v-table>
-          <thead>
-            <tr>
-              <th class="text-left">Name</th>
-              <th class="text-left">Calories</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in desserts" :key="item.name">
-              <td>{{ item.name }}</td>
-              <td>{{ item.calories }}</td>
-            </tr>
-          </tbody>
-        </v-table>
+          <v-sheet rounded="lg">
+            <v-list>
+              <v-list-item
+                v-for="[icon, text] in linksA"
+                :key="icon"
+                :prepend-icon="icon"
+                :title="text"
+                link
+                ><v-divider></v-divider>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list rounded="lg">
+              <v-list-item
+                v-for="n in 5"
+                :key="n"
+                link
+                :title="`List Item ${n}`"
+              ></v-list-item>
+
+              <v-divider class="my-2"></v-divider>
+
+              <v-list-item
+                color="grey-lighten-4"
+                link
+                title="탈퇴하기"
+              ></v-list-item>
+            </v-list>
+          </v-sheet>
+          <!-- 사이드 리스트 end-->
+        </v-col>
+        <!-- 사이드 end-->
+        <!-- 본 페이지 -->
+        <v-col>
+          <v-sheet min-height="70vh" rounded="lg">
+            <!-- 본 -->
+            <p>test</p>
+          </v-sheet>
+        </v-col>
       </v-row>
     </v-container>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+div {
+  margin: 0;
+}
+#warp {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+#container {
+  margin: 0 auto;
+}
+#intro-text {
+  font-size: 50px;
+}
+#side-style {
+  min-width: 300px;
+}
+#profile {
+  padding: 0;
+}
+.custom-icon {
+  font-size: 20;
+}
+.v-dialog::v-sheet {
+  background-color: rgba(255, 255, 255, 1); /* 흰색 배경을 투명하게 설정 */
+}
+</style>
