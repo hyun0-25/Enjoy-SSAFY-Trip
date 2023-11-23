@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useBoardStore } from "@/store/board";
-import { useNeswStore } from "@/store/news";
-const newsStore = useNeswStore();
+// import { useNeswStore } from "@/store/news";
+// const newsStore = useNeswStore();
 const boardStore = useBoardStore();
 
 //-----------contest
@@ -83,12 +83,12 @@ const toggleButton = (index) => {
   hpButtons.value[index].show = !hpButtons.value[index].show;
 };
 // 뉴스 크롤링
-const getNews = computed(() => newsStore.news);
-const neswParams = ref({
-  key: "",
-  word: "",
-});
-newsStore.listNews();
+// const getNews = computed(() => newsStore.news);
+// const neswParams = ref({
+//   key: "",
+//   word: "",
+// });
+// newsStore.listNews();
 const newsDum = ref([
   {
     company: "뉴시스",
@@ -129,19 +129,25 @@ const newsDum = ref([
         <!-- MZ main -->
         <div>
           <v-carousel>
-            <v-carousel-item
-              src="https://dimg.donga.com/wps/NEWS/IMAGE/2022/11/05/116328493.1.edit.jpg"
-            ></v-carousel-item>
+            <RouterLink :to="{ path: '/map/write' }">
+              <v-carousel-item
+                src="https://dimg.donga.com/wps/NEWS/IMAGE/2022/11/05/116328493.1.edit.jpg"
+              ></v-carousel-item
+            ></RouterLink>
 
-            <v-carousel-item
-              src="https://cdn.lecturernews.com/news/photo/201809/7434_19046_3811.jpg"
-              cover
-            ></v-carousel-item>
+            <RouterLink :to="{ path: '/map/write' }">
+              <v-carousel-item
+                src="https://cdn.lecturernews.com/news/photo/201809/7434_19046_3811.jpg"
+                cover
+              ></v-carousel-item>
+            </RouterLink>
 
-            <v-carousel-item
-              src="https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTBfMjg4/MDAxNTc1OTU3MTQ1MTU1.pH-PUmgINJ29hgr1Qh8ZQr3jKdYR5IIzWDPkP_xLGpUg.iJnGDLYq3vduN4GzOMJKX-FQG1LCDSr3I3Juo0VoAJ8g.JPEG.kjchol123/%EC%A0%95%EB%8F%99%EC%A7%84.jpg?type=w800"
-              cover
-            ></v-carousel-item>
+            <RouterLink :to="{ path: '/map/write' }">
+              <v-carousel-item
+                src="https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTBfMjg4/MDAxNTc1OTU3MTQ1MTU1.pH-PUmgINJ29hgr1Qh8ZQr3jKdYR5IIzWDPkP_xLGpUg.iJnGDLYq3vduN4GzOMJKX-FQG1LCDSr3I3Juo0VoAJ8g.JPEG.kjchol123/%EC%A0%95%EB%8F%99%EC%A7%84.jpg?type=w800"
+                cover
+              ></v-carousel-item>
+            </RouterLink>
           </v-carousel>
         </div>
         <!-- MZ Hot Place -->

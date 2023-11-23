@@ -43,8 +43,7 @@ const dialog = ref(false);
           </li>
           <li>
             <div class="text-center">
-              <!-- <RouterLink :to="{ name: 'free-list' }">여행코스</RouterLink> -->
-              <a href="/">여행코스</a>
+              <RouterLink :to="{ path: '/map/write' }">여행코스</RouterLink>
             </div>
           </li>
           <li>
