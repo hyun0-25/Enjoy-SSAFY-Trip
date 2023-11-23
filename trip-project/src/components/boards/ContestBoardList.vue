@@ -19,6 +19,9 @@ boardStore.getArticles(params.value, "contest");
 <template>
   <v-card class="mx-auto" max-width="800px">
     <v-card-title> 콘테스트 게시판 </v-card-title>
+    <RouterLink :to="{ name: 'contest-write' }"
+      ><v-btn class="button">글쓰기</v-btn></RouterLink
+    >
     <v-container fluid>
       <v-row dense>
         <v-col v-for="card in articles" :key="card.title" :cols="4">
@@ -64,4 +67,9 @@ boardStore.getArticles(params.value, "contest");
   </v-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.button {
+  text-decoration: none;
+  color: black;
+}
+</style>

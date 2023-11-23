@@ -23,7 +23,7 @@ const dialog = ref(false);
 //2.반응형 데이터 연결하기
 const mylist = computed(() => mylocationStore.mylist);
 const params = ref({
-  userId: "ssafy", //로그인 유저정보
+  userId: authStore.user.userId, //로그인 유저 정보
 });
 //목록 조회
 mylocationStore.getMyList(params.value);
@@ -31,6 +31,9 @@ mylocationStore.getMyList(params.value);
 const moveToTrip = (n) => {
   router.push({ path: `/map/detail/${n}` });
 };
+
+// 회원 탈퇴
+const deleteUser = () => {};
 </script>
 
 <template>
@@ -117,6 +120,7 @@ const moveToTrip = (n) => {
                 color="grey-lighten-4"
                 link
                 title="탈퇴하기"
+                @click="deleteUser"
               ></v-list-item>
             </v-list>
           </v-sheet>

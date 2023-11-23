@@ -25,11 +25,14 @@ const date = ref(
     .toISOString()
     .slice(0, 10)
 );
-const adapter = useDate();
+const menu = ref(false);
 
-function allowedDates(val) {
-  return parseInt(adapter.toISO(val).split("-")[2], 10) % 2 === 0;
-}
+const saveDate = () => {
+  birthday.value = date.value;
+};
+const cancleMenu = () => {
+  menu.value = false;
+};
 
 const dialog = ref(false);
 
@@ -86,33 +89,22 @@ const modify = async () => {
       <v-text-field v-model="userInfo.email" label="이메일" id="eamil">
       </v-text-field>
       <!-- 생일 -->
-      <v-dialog v-model="dialog" width="600">
-        <template v-slot:activator="{ on, attrs }">
-          <a v-on:click="() => (dialog = !dialog)" v-bind="attrs"
-            >생일 수정하기</a
-          >
-        </template>
-        <template v-slot:default="{ isActive }">
-          <v-card title="날짜">
-            <v-card-text>
-              <v-container>
-                <v-row justify="space-around">
-                  <v-date-picker
-                    v-model="date"
-                    :allowed-dates="allowedDates"
-                    min="1950-06-15"
-                    max="2018-03-20"
-                  ></v-date-picker>
-                </v-row>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text="확인" @click="isActive.value = false"></v-btn>
-            </v-card-actions>
-          </v-card>
-        </template>
-      </v-dialog>
+      <div class="text-center">
+        <v-text-field
+          v-model="userInfo.birthday"
+          label="생일"
+          @click="dialog = true"
+        >
+          <!-- {{ userInfo.birthday }} -->
+        </v-text-field>
+
+        <v-dialog v-model="dialog" width="auto">
+          <v-date-picker></v-date-picker>
+          <v-btn @click="saveDate">확인</v-btn>
+        </v-dialog>
+      </div>
+
+      <v-date-picker></v-date-picker>
 
       <!-- 프로필 사진 -->
       <P>

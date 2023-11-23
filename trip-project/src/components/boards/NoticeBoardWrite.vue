@@ -2,11 +2,13 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useBoardStore } from "../../store/board";
+import { useAuthStore } from "@/store/auth";
 const boardStore = useBoardStore();
+const authStore = useAuthStore();
 
 const router = useRouter();
 const writeForm = ref({
-  userId: "ssafy",
+  userId: authStore.user.userId,
   title: "",
   content: "",
 });

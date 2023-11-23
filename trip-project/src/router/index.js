@@ -33,9 +33,20 @@ const router = createRouter({
           component: () => import("@/components/boards/HotBoardList.vue"),
         },
         {
+          path: "/hot/write",
+          name: "hot-write",
+          component: () =>
+            import("@/components/boards/HotNoticeBoardWrite.vue"),
+        },
+        {
           path: "contest",
           name: "contest-list",
           component: () => import("@/components/boards/ContestBoardList.vue"),
+        },
+        {
+          path: "/contest/write",
+          name: "contest-write",
+          component: () => import("@/components/boards/ContestBoardWrite.vue"),
         },
         {
           path: "/notice/write",
@@ -88,6 +99,11 @@ const router = createRouter({
           path: "adminpage",
           name: "user-admin-page",
           component: () => import("@/components/users/AdminPage.vue"),
+        },
+        {
+          path: "modify",
+          name: "user-modify-page",
+          component: () => import("@/components/users/UserModify.vue"),
         },
       ],
     },

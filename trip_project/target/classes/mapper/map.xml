@@ -111,6 +111,13 @@
 		where course_id = #{courseId};
 	</select>
 	
+	<select id="AllLocationList" parameterType="string" resultMap="trip">
+		select course_id, max(course_name) AS course_name, max(start_date) AS start_date, max(end_date) AS end_date
+		from mylocation
+		group by course_id 
+        order by course_id desc;
+	</select>
+	
 	
 	
 </mapper>
