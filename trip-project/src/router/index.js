@@ -35,8 +35,7 @@ const router = createRouter({
         {
           path: "/hot/write",
           name: "hot-write",
-          component: () =>
-            import("@/components/boards/HotNoticeBoardWrite.vue"),
+          component: () => import("@/components/boards/HotBoardWrite.vue"),
         },
         {
           path: "contest",
