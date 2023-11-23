@@ -1,8 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useAuthStore } from "@/store/auth";
+import { useRouter, useRoute } from "vue-router";
 import UserModify from "./UserModify.vue";
+import { useMyLocationStore } from "@/store/mylocation";
+const router = useRouter();
 const authStore = useAuthStore();
+const mylocationStore = useMyLocationStore();
 
 const user = authStore.user.value;
 console.log(user);
@@ -18,6 +22,18 @@ const drawer = ref(null);
 
 // 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
 const dialog = ref(false);
+
+//2.반응형 데이터 연결하기
+const mylist = computed(() => mylocationStore.mylist);
+const params = ref({
+  userId: "ssafy", //로그인 유저정보
+});
+//목록 조회
+mylocationStore.getMyList(params.value);
+
+const moveToTrip = (n) => {
+  router.push({ path: `/map/detail/${n}` });
+};
 </script>
 
 <template>
@@ -38,16 +54,16 @@ const dialog = ref(false);
                 <v-list style="background-color: transparent">
                   <v-list-item>
                     <!-- 이용자 정보 -->
-                    <v-list-item-content>
-                      <v-list-item-title
-                        >{{ authStore.user.userNickname }} ({{
-                          authStore.user.userId
-                        }})</v-list-item-title
-                      >
-                      <v-list-item-subtitle>{{
-                        authStore.user.email
-                      }}</v-list-item-subtitle>
-                    </v-list-item-content>
+                    <!-- <v-list-item-content> -->
+                    <v-list-item-title
+                      >{{ authStore.user.userNickname }} ({{
+                        authStore.user.userId
+                      }})</v-list-item-title
+                    >
+                    <v-list-item-subtitle>{{
+                      authStore.user.email
+                    }}</v-list-item-subtitle>
+                    <!-- </v-list-item-content> -->
                     <!-- 수정 버튼 -->
                     <v-list-item-action class="right">
                       <v-spacer></v-spacer>
@@ -89,11 +105,14 @@ const dialog = ref(false);
             <v-divider></v-divider>
             <v-list rounded="lg">
               <v-list-item
-                v-for="n in 5"
-                :key="n"
+                v-for="item in mylist"
+                :key="item.courseId"
                 link
-                :title="`List Item ${n}`"
-              ></v-list-item>
+                :title="`${item.courseName}`"
+                @click="moveToTrip(item.courseId)"
+              >
+                <h5>여행일 : {{ item.startDate + " ~ " + item.endDate }}</h5>
+              </v-list-item>
 
               <v-divider class="my-2"></v-divider>
 
@@ -111,7 +130,7 @@ const dialog = ref(false);
         <v-col>
           <v-sheet min-height="70vh" rounded="lg">
             <!-- 본 -->
-            <p>test</p>
+            test
           </v-sheet>
         </v-col>
       </v-row>

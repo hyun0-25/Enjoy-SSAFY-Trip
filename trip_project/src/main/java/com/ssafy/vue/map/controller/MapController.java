@@ -22,6 +22,7 @@ import com.ssafy.vue.board.dto.BoardDto;
 import com.ssafy.vue.map.dto.AttractionDto;
 import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
+import com.ssafy.vue.map.dto.TripDto;
 import com.ssafy.vue.map.model.service.MapService;
 
 import io.swagger.annotations.Api;
@@ -94,6 +95,22 @@ public class MapController {
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
+	}
+	
+	@ApiOperation(value = "유저 여행리스트 정보", notes = "유저 여행리스트를 반환한다.", response = List.class)
+	@GetMapping("/mylist")
+	public ResponseEntity<List<TripDto>> mylocationList(
+			@RequestParam("userId") @ApiParam(value = "유저아이디", required = true) String userId) throws Exception {
+		log.info("mylocationList - 호출");
+		return new ResponseEntity<List<TripDto>>(mapService.mylocationList(userId), HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "유저 여행리스트 정보", notes = "유저 여행리스트를 반환한다.", response = List.class)
+	@GetMapping("/mylocation/{courseId}")
+	public ResponseEntity<List<MyLocationDto>> courseList(
+			@PathVariable("courseId") @ApiParam(value = "여행경로 아이디", required = true) int courseId) throws Exception {
+		log.info("courseList - 호출");
+		return new ResponseEntity<List<MyLocationDto>>(mapService.courseList(courseId), HttpStatus.OK);
 	}
 	
 	
