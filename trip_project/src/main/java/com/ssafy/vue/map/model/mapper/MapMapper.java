@@ -7,6 +7,7 @@ import java.util.Map;
 import com.ssafy.vue.map.dto.AttractionDto;
 import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
+import com.ssafy.vue.map.dto.TripDto;
 
 public interface MapMapper {
 
@@ -16,4 +17,7 @@ public interface MapMapper {
 	AttractionDto getAttraction(int contentid) throws SQLException;
 	List<AttractionDto> listAttractions(Map<String, Object> param) throws SQLException;
 	void writeMyLocation(List<MyLocationDto> mylocationlist) throws SQLException;
+	List<TripDto> mylocationList(String userId) throws SQLException;
+	List<MyLocationDto> courseList(int courseId) throws SQLException;
+	void deleteCourse(int courseId) throws SQLException;
 }

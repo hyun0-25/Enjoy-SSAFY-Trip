@@ -34,6 +34,7 @@
           {{ item.boardId }}
         </div>
       </template> -->
+
       <template v-slot:bottom>
         <div class="text-center pt-2">
           <v-pagination
@@ -44,7 +45,9 @@
         </div>
       </template>
     </v-data-table>
-    <RouterLink :to="{ name: 'notice-write' }"
+    <RouterLink
+      :to="{ name: 'notice-write' }"
+      v-if="authStore.user.role == 'admin'"
       ><v-btn class="button">글쓰기</v-btn></RouterLink
     >
   </v-card>
@@ -55,8 +58,10 @@ import SearchBar from "../../components/searchbar/SearchBar.vue";
 import { RouterLink, useRouter } from "vue-router";
 import { ref, computed } from "vue";
 //1.store 객체 얻어오기
+import { useAuthStore } from "@/store/auth";
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
+const authStore = useAuthStore();
 const loading = ref(true);
 const router = useRouter();
 

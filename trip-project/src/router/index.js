@@ -33,9 +33,20 @@ const router = createRouter({
           component: () => import("@/components/boards/HotBoardList.vue"),
         },
         {
+          path: "/hot/write",
+          name: "hot-write",
+          component: () =>
+            import("@/components/boards/HotNoticeBoardWrite.vue"),
+        },
+        {
           path: "contest",
           name: "contest-list",
           component: () => import("@/components/boards/ContestBoardList.vue"),
+        },
+        {
+          path: "/contest/write",
+          name: "contest-write",
+          component: () => import("@/components/boards/ContestBoardWrite.vue"),
         },
         {
           path: "/notice/write",
@@ -70,24 +81,29 @@ const router = createRouter({
       component: TheUserView,
       children: [
         {
-          path: "/login",
+          path: "login",
           name: "user-login",
           component: () => import("@/components/users/UserLogin.vue"),
         },
         {
-          path: "/join",
+          path: "join",
           name: "user-join",
           component: () => import("@/components/users/UserRegister.vue"),
         },
         {
-          path: "/mypage",
+          path: "mypage",
           name: "user-mypage",
           component: () => import("@/components/users/UserMyPage.vue"),
         },
         {
-          path: "/adminpage",
+          path: "adminpage",
           name: "user-admin-page",
           component: () => import("@/components/users/AdminPage.vue"),
+        },
+        {
+          path: "modify",
+          name: "user-modify-page",
+          component: () => import("@/components/users/UserModify.vue"),
         },
       ],
     },
@@ -95,6 +111,23 @@ const router = createRouter({
       path: "/map",
       name: "map",
       component: TheKakaoMap,
+      children: [
+        {
+          path: "write",
+          name: "trip-write",
+          component: () => import("@/components/maps/TripWrite.vue"),
+        },
+        {
+          path: "detail/:courseId",
+          name: "trip-detail",
+          component: () => import("@/components/maps/TripDetail.vue"),
+        },
+        {
+          path: "modify/:courseId",
+          name: "trip-modify",
+          component: () => import("@/components/maps/TripModify.vue"),
+        },
+      ],
     },
   ],
 });

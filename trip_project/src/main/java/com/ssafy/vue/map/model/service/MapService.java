@@ -3,6 +3,7 @@ package com.ssafy.vue.map.model.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.vue.map.dto.TripDto;
 import com.ssafy.vue.map.dto.AttractionDto;
 import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
@@ -15,5 +16,8 @@ public interface MapService {
 	AttractionDto getAttraction(int contentid) throws Exception;
 	List<AttractionDto> listAttractions(Map<String, Integer> map) throws Exception;
 	void writeMyLocation(List<MyLocationDto> mylocationlist) throws Exception;
+	List<TripDto> mylocationList(String userId) throws Exception;
+	List<MyLocationDto> courseList(int courseId) throws Exception;
+	void deleteCourse(int courseId) throws Exception;
 	
 }

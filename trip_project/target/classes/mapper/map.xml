@@ -80,6 +80,13 @@
 		<result column="course_order" property="courseOrder"/>
 	</resultMap>
 	
+	<resultMap type="TripDto" id="trip">
+		<result column="course_id" property="courseId"/>
+		<result column="course_name" property="courseName"/>
+		<result column="start_date" property="startDate"/>
+		<result column="end_date" property="endDate"/>
+	</resultMap>
+	
 	<insert id="writeMyLocation" parameterType="java.util.List">
 		<selectKey resultType="int" keyProperty="nextcourseId" order="BEFORE">
 		 	select if(isnull(max(course_id)), 1, max(course_id)+1) from mylocation
@@ -90,6 +97,35 @@
 			(#{nextcourseId}, #{item.courseName}, #{item.userId}, #{item.contentId}, #{item.order}, #{item.startDate}, #{item.endDate}, #{item.courseOrder})
 		</foreach>
 	</insert>
+	
+	<select id="mylocationList" parameterType="string" resultMap="trip">
+		select course_id, max(course_name) AS course_name, max(start_date) AS start_date, max(end_date) AS end_date
+		from mylocation
+		where user_id = #{userId}
+		group by course_id;
+	</select>
+	
+	<select id="courseList" parameterType="int" resultMap="mylocation">
+		select *
+		from mylocation
+		where course_id = #{courseId};
+	</select>
+	
+<<<<<<< HEAD
+	<select id="AllLocationList" parameterType="string" resultMap="trip">
+		select course_id, max(course_name) AS course_name, max(start_date) AS start_date, max(end_date) AS end_date
+		from mylocation
+		group by course_id 
+        order by course_id desc;
+	</select>
+=======
+	<delete id="deleteCourse" parameterType="int">
+		delete
+		from mylocation
+		where course_id = #{courseId}
+	</delete>
+>>>>>>> 7960f77588c7654ddcb265d563042487d83fddd1
+	
 	
 	
 </mapper>

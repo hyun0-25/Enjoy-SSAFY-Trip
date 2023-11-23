@@ -1,5 +1,22 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useAuthStore } from "@/store/auth";
+import { useMyLocationStore } from "@/store/mylocation";
+
+const authStore = useAuthStore();
+const mylocationStore = useMyLocationStore();
+
+//2.반응형 데이터 연결하기
+const mylist = computed(() => mylocationStore.mylist);
+const params = ref({
+  userId: authStore.user.userId, //로그인 유저정보
+});
+//목록 조회
+mylocationStore.getMyList(params.value);
+
+const moveToTrip = (n) => {
+  router.push({ path: `/map/detail/${n}` });
+};
 
 const tab = ref(null);
 const search = ref("");
@@ -36,6 +53,11 @@ const boardInfo = ref([
         <v-col cols="12" md="2">
           <v-sheet rounded="lg" min-height="268">
             <!-- 왼쪽 사이드 -->
+            <a
+              href="https://www.facebook.com/sweeteuro/posts/1013008952232448/?locale=ko_KR"
+            >
+              <v-img cover src="@/assets/with.jpg"
+            /></a>
           </v-sheet>
         </v-col>
         <!-- 본문 -->
@@ -96,14 +118,26 @@ const boardInfo = ref([
                   v-for="(item, index) in tabType"
                   :key="index"
                 >
+                  <!-- 여행 리스트 -->
+                  <v-list rounded="lg">
+                    <v-list-item
+                      v-for="item in mylist"
+                      :key="item.courseId"
+                      link
+                      :title="`${item.courseName}`"
+                      @click="moveToTrip(item.courseId)"
+                    >
+                      <h5>
+                        여행일 : {{ item.startDate + " ~ " + item.endDate }}
+                      </h5>
+                    </v-list-item>
+
+                    <v-divider class="my-2"></v-divider>
+                  </v-list>
                   <v-container fluid>
                     <!-- 게시글 리스트 시작 -->
                     <v-row align="center" justify="center">
-                      <v-col
-                        v-for="(info, i) in boardInfo"
-                        :key="i"
-                        cols="auto"
-                      >
+                      <v-col v-for="(info, i) in mylist" :key="i" cols="auto">
                         <v-card
                           class="mx-auto"
                           max-width="344"
@@ -120,7 +154,7 @@ const boardInfo = ref([
                           </v-card-item>
 
                           <v-card-actions>
-                            <v-btn> Button </v-btn>
+                            <v-btn> 참가하기 </v-btn>
 
                             <!-- 잡다한거 -->
                             <v-btn value="recent">

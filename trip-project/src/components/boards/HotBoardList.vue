@@ -89,5 +89,14 @@ const pageCount = computed(() =>
         </div>
       </template>
     </v-data-table>
+    <RouterLink :to="{ name: 'hot-write' }"
+      ><v-btn class="button">글쓰기</v-btn></RouterLink
+    >
   </v-card>
 </template>
+<style scoped>
+.button {
+  text-decoration: none;
+  color: black;
+}
+</style>

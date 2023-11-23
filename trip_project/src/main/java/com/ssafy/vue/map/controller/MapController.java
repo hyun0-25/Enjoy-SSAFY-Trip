@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import com.ssafy.vue.board.dto.BoardDto;
 import com.ssafy.vue.map.dto.AttractionDto;
 import com.ssafy.vue.map.dto.MyLocationDto;
 import com.ssafy.vue.map.dto.SidoGugunCodeDto;
+import com.ssafy.vue.map.dto.TripDto;
 import com.ssafy.vue.map.model.service.MapService;
 
 import io.swagger.annotations.Api;
@@ -96,6 +98,30 @@ public class MapController {
 		}
 	}
 	
+	@ApiOperation(value = "유저 여행리스트 정보", notes = "유저 여행리스트를 반환한다.", response = List.class)
+	@GetMapping("/mylist")
+	public ResponseEntity<List<TripDto>> mylocationList(
+			@RequestParam("userId") @ApiParam(value = "유저아이디", required = true) String userId) throws Exception {
+		log.info("mylocationList - 호출");
+		return new ResponseEntity<List<TripDto>>(mapService.mylocationList(userId), HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "유저 여행리스트 정보", notes = "유저 여행리스트를 반환한다.", response = List.class)
+	@GetMapping("/mylocation/{courseId}")
+	public ResponseEntity<List<MyLocationDto>> courseList(
+			@PathVariable("courseId") @ApiParam(value = "여행경로 아이디", required = true) int courseId) throws Exception {
+		log.info("courseList - 호출");
+		return new ResponseEntity<List<MyLocationDto>>(mapService.courseList(courseId), HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "유저 여행리스트 삭제", notes = "유저 여행리스트를 삭제한다. 그리고 DB삭제 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
+	@DeleteMapping("/mylocation/{courseId}")
+	public ResponseEntity<String> deleteCourse(
+			@PathVariable("courseId") @ApiParam(value = "여행경로 아이디", required = true) int courseId) throws Exception {
+		log.info("deleteCourse - 호출");
+		mapService.deleteCourse(courseId);
+		return ResponseEntity.ok().build();
+	}
 	
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();
