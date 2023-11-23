@@ -111,6 +111,12 @@
 		where course_id = #{courseId};
 	</select>
 	
+	<delete id="deleteCourse" parameterType="int">
+		delete
+		from mylocation
+		where course_id = #{courseId}
+	</delete>
+	
 	
 	
 </mapper>

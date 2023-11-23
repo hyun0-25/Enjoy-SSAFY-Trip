@@ -3,7 +3,6 @@ import { onMounted, ref, computed, watch } from "vue";
 import draggable from "vuedraggable";
 import { useRouter, useRoute } from "vue-router";
 //1.store 객체 얻어오기
-import { useAttractionStore } from "@/store/attraction";
 import { useMyLocationStore } from "@/store/mylocation";
 const router = useRouter();
 const route = useRoute();
@@ -11,8 +10,9 @@ const mylocationStore = useMyLocationStore();
 
 const { courseId } = route.params;
 const tripview = ref([]);
-const attractions = ref([]);
 const attraction = computed(() => mylocationStore.attraction);
+const trip_title = ref("");
+const isListOpen = ref(false);
 
 //2.반응형 데이터 연결하기
 const courseList = computed(() => mylocationStore.courseList);
@@ -29,19 +29,21 @@ onMounted(async () => {
     for (let j = 0; j < filtertrip.length; j++) {
       await getoneattraction(filtertrip, j);
       tripview.value[i].push(attraction.value);
-      attractions.value.push(attraction.value);
     }
   }
   trip_title.value = courseList.value[0].courseName;
   tripDateFormat.value =
     courseList.value[0].startDate + " ~ " + courseList.value[0].endDate;
+
+  if (window.kakao && window.kakao.maps) loadMap();
+  else loadScript();
 });
 
 const getoneattraction = async (filtertrip, j) => {
   await mylocationStore.getAttraction(filtertrip[j].contentId);
 };
 
-//////////////////////////////////////////////////////////////////////
+///////////////////////////////////////
 //지도
 const container = ref(null); //<div id="map"> 엘리먼트 객체
 // const map = ref(null); //kakaoMap 객체
@@ -56,79 +58,88 @@ const loadScript = () => {
   script.onload = () => kakao.maps.load(loadMap);
   document.head.appendChild(script);
 };
+
 const markers = ref([]);
 const positions = ref([]);
 const linePath = ref([]);
 //지도 불러오는 메소드
-const loadMap = () => {
+const loadMap = async () => {
   //1.지도 출력
   const options = {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
-    level: 3,
+    level: 6,
   };
   map = new kakao.maps.Map(container.value, options);
-
+  const strokeColors = [
+    "#00D1FF",
+    "#82D333",
+    "#FFAE00",
+    "#D5A2FF",
+    "#FF0078",
+    "#007EFF",
+    "#987E00",
+  ];
   positions.value = [];
-  // for(let i=0; i<tripview.value.length; i++){
-  //   for(let j=0;j<tripview.value[i];j++){
-  //     const station = tripview.value[i][j]
-  //   }
-  // }
-  attractions.value.forEach((station) => {
-    let position = {};
-    position.latlng = new kakao.maps.LatLng(
-      station.latitude,
-      station.longitude
-    );
-    position.title = station.title;
-
-    // positions.value.push(obj);
-    console.log(position);
-    const marker = new kakao.maps.Marker({
-      map: map, // 마커를 표시할 지도
-      position: position.latlng, // 마커를 표시할 위치
-      // title: position.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨.
-      clickable: true, // // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
-      // image: markerImage, // 마커의 이미지
-    });
-
-    linePath.value.push(position.latlng);
-
-    markers.value.push(marker);
-    marker.setMap(map);
-
-    var iwContent =
-      '<div style="padding:5px;">' + count++ + ". " + position.title + "</div>";
-
-    // 인포윈도우를 생성합니다
-    var infowindow = new kakao.maps.InfoWindow({
-      position: position.latlng,
-      content: iwContent,
-    });
-
-    // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
-    infowindow.open(map, marker);
-  });
   markers.value = [];
-  var count = 1;
 
-  positions.value.forEach((position) => {});
+  for (let i = 0; i < tripview.value.length; i++) {
+    linePath.value = [];
+    var count = 1;
+    for (let j = 0; j < tripview.value[i].length; j++) {
+      const station = tripview.value[i][j];
+      console.log(station);
+      let position = {};
+      position.latlng = new kakao.maps.LatLng(
+        station.latitude,
+        station.longitude
+      );
+      position.title = station.title;
+      positions.value.push(position);
 
-  console.log(linePath.value);
-  var polyline = new kakao.maps.Polyline({
-    path: linePath.value, // 선을 구성하는 좌표배열 입니다
-    strokeWeight: 5, // 선의 두께 입니다
-    strokeColor: "#FFAE00", // 선의 색깔입니다
-    strokeOpacity: 0.6, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-    strokeStyle: "solid", // 선의 스타일입니다
-  });
-  polyline.setMap(map);
+      const marker = new kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: position.latlng, // 마커를 표시할 위치
+        clickable: true, // // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
+      });
+
+      linePath.value.push(position.latlng);
+
+      markers.value.push(marker);
+
+      var iwContent =
+        '<div style="padding:5px;">' +
+        count++ +
+        ". " +
+        position.title +
+        "</div>";
+
+      // 인포윈도우를 생성합니다
+      var infowindow = new kakao.maps.InfoWindow({
+        position: position.latlng,
+        content: iwContent,
+      });
+
+      // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
+      infowindow.open(map, marker);
+    }
+
+    var polyline = new kakao.maps.Polyline({
+      path: linePath.value, // 선을 구성하는 좌표배열 입니다
+      strokeWeight: 5, // 선의 두께 입니다
+      strokeColor: strokeColors[i], // 선의 색깔입니다
+      strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+      strokeStyle: "solid", // 선의 스타일입니다
+    });
+    polyline.setMap(map);
+  }
+
   if (positions.value.length > 0) {
     map.panTo(positions.value[0].latlng);
   }
 };
 
 const selectAttraction = ref({});
+
 watch(
   () => selectAttraction.value,
   () => {
@@ -145,11 +156,6 @@ watch(
   { deep: true }
 );
 
-onMounted(() => {
-  if (window.kakao && window.kakao.maps) loadMap();
-  else loadScript();
-});
-
 const markposition = (item) => {
   selectAttraction.value = item;
 };
@@ -163,9 +169,17 @@ const offdialog = () => {
   dialog.value = false;
 };
 
-const trip_title = ref("");
-
-const isListOpen = ref(false);
+const deleteCourse = async () => {
+  try {
+    if (!confirm("여행 정보를 삭제하시겠습니까?")) return;
+    await mylocationStore.deleteCourse(courseId);
+    router.push("/user/mypage");
+    alert("삭제 완료");
+  } catch (error) {
+    console.log("삭제 에러:", error);
+    alert("삭제 실패");
+  }
+};
 </script>
 
 <template>
@@ -189,7 +203,9 @@ const isListOpen = ref(false);
             <p>여행 일정</p>
             <h5>{{ tripDateFormat }}</h5>
             <v-btn style="margin-bottom: 5px">여행 수정</v-btn>
-            <v-btn style="margin-bottom: 5px">여행 삭제</v-btn>
+            <v-btn style="margin-bottom: 5px" @click="deleteCourse()"
+              >여행 삭제</v-btn
+            >
             <v-list style="overflow-x: auto; white-space: nowrap" width="100%">
               <v-list-item
                 v-for="(list, idx) in tripview"

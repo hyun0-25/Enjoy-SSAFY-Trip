@@ -61,4 +61,9 @@ public class MapServiceImpl implements MapService {
 		return mapMapper.courseList(courseId);
 	}
 
+	@Override
+	public void deleteCourse(int courseId) throws Exception {
+		mapMapper.deleteCourse(courseId);		
+	}
+
 }

@@ -18,5 +18,6 @@ public interface MapService {
 	void writeMyLocation(List<MyLocationDto> mylocationlist) throws Exception;
 	List<TripDto> mylocationList(String userId) throws Exception;
 	List<MyLocationDto> courseList(int courseId) throws Exception;
+	void deleteCourse(int courseId) throws Exception;
 	
 }

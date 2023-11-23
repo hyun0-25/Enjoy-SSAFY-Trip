@@ -106,6 +106,11 @@ const router = createRouter({
           name: "trip-detail",
           component: () => import("@/components/maps/TripDetail.vue"),
         },
+        {
+          path: "modify/:courseId",
+          name: "trip-modify",
+          component: () => import("@/components/maps/TripModify.vue"),
+        },
       ],
     },
   ],
