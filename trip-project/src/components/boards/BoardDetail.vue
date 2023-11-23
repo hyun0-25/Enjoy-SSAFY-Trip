@@ -20,13 +20,6 @@ onMounted(async () => {
   }
 });
 
-// const getImageUrl = (file) => {
-//   // 이미지 파일의 경로를 반환하는 메서드
-//   // 실제 프로젝트에서는 이미지 서버 URL 또는 이미지를 저장한 경로를 사용해야 합니다.
-//   console.log(file.originalFile);
-//   return `http://localhost/images/${file.originalFile}`;
-// };
-
 const deleteArticle = async () => {
   try {
     if (!confirm("정말 삭제하시겠습니까?")) return;
