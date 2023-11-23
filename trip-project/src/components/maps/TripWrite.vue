@@ -239,7 +239,7 @@ const MaxDate = ref(null);
 
 watch(PickstartDate, () => {
   var sdate = new Date(PickstartDate.value);
-  console.log(sdate);
+  // console.log(sdate);
   var mdate = new Date(sdate.setDate(sdate.getDate() + 6));
   MaxDate.value = mdate;
   // console.log(MaxDate.value);
@@ -274,25 +274,31 @@ const confirm = () => {
     PickendDate.value != null
   ) {
     size.value = listsize.value =
-      PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+      (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
+        (1000 * 60 * 60 * 24) +
+      1;
     for (var i = 0; i < size.value; i++) {
       tripview.value.push(new Array());
     }
   } else if (PickstartDate.value != null && PickendDate.value != null) {
     var addsize =
-      PickendDate.value.getDate() -
-      PickstartDate.value.getDate() +
+      (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
+        (1000 * 60 * 60 * 24) +
       1 -
       listsize.value;
     if (addsize > 0) {
       size.value = listsize.value =
-        PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+        (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
+          (1000 * 60 * 60 * 24) +
+        1;
       for (var i = 0; i < addsize; i++) {
         tripview.value.push(new Array());
       }
     } else {
       listsize.value =
-        PickendDate.value.getDate() - PickstartDate.value.getDate() + 1;
+        (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
+          (1000 * 60 * 60 * 24) +
+        1;
     }
   }
 
@@ -307,6 +313,7 @@ const confirm = () => {
     //view에 보일 일정
     tripview.value = tripview.value.slice(0, listsize.value);
   }
+  console.log(listsize.value);
 };
 
 const openModal = () => {

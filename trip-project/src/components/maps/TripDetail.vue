@@ -47,8 +47,6 @@ const container = ref(null); //<div id="map"> 엘리먼트 객체
 // const map = ref(null); //kakaoMap 객체
 var map;
 
-const message = ref("");
-
 //최초에 javascript 파일 가져올 때만 실행될 메소드
 const loadScript = () => {
   const script = document.createElement("script");
@@ -60,6 +58,7 @@ const loadScript = () => {
 };
 const markers = ref([]);
 const positions = ref([]);
+const linePath = ref([]);
 //지도 불러오는 메소드
 const loadMap = () => {
   //1.지도 출력
@@ -70,26 +69,60 @@ const loadMap = () => {
   map = new kakao.maps.Map(container.value, options);
 
   positions.value = [];
+  // for(let i=0; i<tripview.value.length; i++){
+  //   for(let j=0;j<tripview.value[i];j++){
+  //     const station = tripview.value[i][j]
+  //   }
+  // }
   attractions.value.forEach((station) => {
-    let obj = {};
-    obj.latlng = new kakao.maps.LatLng(station.latitude, station.longitude);
-    obj.title = station.title;
+    let position = {};
+    position.latlng = new kakao.maps.LatLng(
+      station.latitude,
+      station.longitude
+    );
+    position.title = station.title;
 
-    positions.value.push(obj);
-  });
-  markers.value = [];
-  positions.value.forEach((position) => {
+    // positions.value.push(obj);
     console.log(position);
     const marker = new kakao.maps.Marker({
       map: map, // 마커를 표시할 지도
       position: position.latlng, // 마커를 표시할 위치
-      title: position.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨.
+      // title: position.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨.
       clickable: true, // // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
       // image: markerImage, // 마커의 이미지
     });
+
+    linePath.value.push(position.latlng);
+
     markers.value.push(marker);
     marker.setMap(map);
+
+    var iwContent =
+      '<div style="padding:5px;">' + count++ + ". " + position.title + "</div>";
+
+    // 인포윈도우를 생성합니다
+    var infowindow = new kakao.maps.InfoWindow({
+      position: position.latlng,
+      content: iwContent,
+    });
+
+    // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
+    infowindow.open(map, marker);
   });
+  markers.value = [];
+  var count = 1;
+
+  positions.value.forEach((position) => {});
+
+  console.log(linePath.value);
+  var polyline = new kakao.maps.Polyline({
+    path: linePath.value, // 선을 구성하는 좌표배열 입니다
+    strokeWeight: 5, // 선의 두께 입니다
+    strokeColor: "#FFAE00", // 선의 색깔입니다
+    strokeOpacity: 0.6, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+    strokeStyle: "solid", // 선의 스타일입니다
+  });
+  polyline.setMap(map);
   if (positions.value.length > 0) {
     map.panTo(positions.value[0].latlng);
   }
@@ -142,92 +175,93 @@ const isListOpen = ref(false);
 
     <!-- </div> -->
 
-    <div style="width: 100%">
-      <div ref="container" id="map" style="height: 100%">
-        <v-expand-x-transition style="width: 45%; position: relative">
-          <v-card v-show="!isListOpen" class="slide">
-            <v-card-text>
-              <!-- Your content goes here -->
-              <v-text-field
-                v-model="trip_title"
-                label="여행명"
-                variant="outlined"
-                readonly
-              ></v-text-field>
-              <p>여행 일정</p>
-              <h5>{{ tripDateFormat }}</h5>
-              <v-btn style="margin-bottom: 5px">여행 수정</v-btn>
-              <v-list
-                style="overflow-x: auto; white-space: nowrap"
-                width="100%"
+    <div style="width: 100%; display: flex">
+      <v-expand-x-transition style="width: 45%; position: relative">
+        <v-card v-show="!isListOpen" class="slide">
+          <v-card-text>
+            <!-- Your content goes here -->
+            <v-text-field
+              v-model="trip_title"
+              label="여행명"
+              variant="outlined"
+              readonly
+            ></v-text-field>
+            <p>여행 일정</p>
+            <h5>{{ tripDateFormat }}</h5>
+            <v-btn style="margin-bottom: 5px">여행 수정</v-btn>
+            <v-btn style="margin-bottom: 5px">여행 삭제</v-btn>
+            <v-list style="overflow-x: auto; white-space: nowrap" width="100%">
+              <v-list-item
+                v-for="(list, idx) in tripview"
+                height="500"
+                width="300"
+                style="display: inline-block"
               >
-                <v-list-item
-                  v-for="(list, idx) in tripview"
-                  height="500"
-                  width="300"
-                  style="display: inline-block"
-                >
-                  <v-list-item-title> {{ idx + 1 }}일차 </v-list-item-title>
-                  <v-list style="overflow-y: scroll" height="500">
-                    <draggable
-                      v-model="tripview[idx]"
-                      item-key="id"
-                      group="items"
-                    >
-                      <template #item="{ index, element }">
-                        <v-card>
+                <v-list-item-title> {{ idx + 1 }}일차 </v-list-item-title>
+                <v-list style="overflow-y: scroll" height="500">
+                  <draggable
+                    v-model="tripview[idx]"
+                    item-key="id"
+                    group="items"
+                  >
+                    <template #item="{ index, element }">
+                      <v-card>
+                        <div>
+                          <v-avatar
+                            class="ma-3"
+                            size="100"
+                            rounded="0"
+                            @dblclick="ondialog(element)"
+                            @click="markposition(element)"
+                          >
+                            <v-img :src="element.firstImage"></v-img>
+                          </v-avatar>
                           <div>
-                            <v-avatar
-                              class="ma-3"
-                              size="100"
-                              rounded="0"
+                            <!-- {{ idx }}
+                            {{ index }} -->
+                            <v-card-title
+                              class="text-h6"
                               @dblclick="ondialog(element)"
                               @click="markposition(element)"
                             >
-                              <v-img :src="element.firstImage"></v-img>
-                            </v-avatar>
-                            <div>
-                              <!-- {{ idx }}
-                            {{ index }} -->
-                              <v-card-title
-                                class="text-h6"
-                                @dblclick="ondialog(element)"
-                                @click="markposition(element)"
-                              >
-                                {{ element.title }}
-                              </v-card-title>
+                              {{ element.title }}
+                            </v-card-title>
 
-                              <v-card-subtitle>{{
-                                element.address
-                              }}</v-card-subtitle>
-                            </div>
+                            <v-card-subtitle>{{
+                              element.address
+                            }}</v-card-subtitle>
                           </div>
-                        </v-card>
-                      </template>
-                    </draggable>
-                    <v-dialog v-model="dialog" width="50vw">
-                      <v-card>
-                        <v-avatar class="ma-3" size="150" rounded="0">
-                          <v-img :src="attractionInfo.firstImage"></v-img>
-                        </v-avatar>
-                        <v-card-title class="text-h6">
-                          {{ attractionInfo.title }}
-                        </v-card-title>
-                        <v-card-text>{{ attractionInfo.overview }}</v-card-text>
-                        <v-card-actions>
-                          <v-btn color="primary" block @click="offdialog()"
-                            >X</v-btn
-                          >
-                        </v-card-actions>
+                        </div>
                       </v-card>
-                    </v-dialog>
-                  </v-list>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-expand-x-transition>
-      </div>
+                    </template>
+                  </draggable>
+                  <v-dialog v-model="dialog" width="50vw">
+                    <v-card>
+                      <v-avatar class="ma-3" size="150" rounded="0">
+                        <v-img :src="attractionInfo.firstImage"></v-img>
+                      </v-avatar>
+                      <v-card-title class="text-h6">
+                        {{ attractionInfo.title }}
+                      </v-card-title>
+                      <v-card-text>{{ attractionInfo.overview }}</v-card-text>
+                      <v-card-actions>
+                        <v-btn color="primary" block @click="offdialog()"
+                          >X</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-list>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-expand-x-transition>
+      <div
+        ref="container"
+        id="map"
+        style="height: 100%; width: 55%; position: relative"
+      ></div>
     </div>
   </div>
 </template>
@@ -247,8 +281,8 @@ const isListOpen = ref(false);
   top: 0;
   right: 0;
   z-index: 3;
-  border-radius: 20px;
-  margin: 10px;
+  /* border-radius: 20px; */
+  /* margin: 10px; */
   height: 100%;
 }
 </style>
