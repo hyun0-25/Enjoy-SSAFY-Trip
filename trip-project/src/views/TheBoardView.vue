@@ -2,7 +2,6 @@
 
 <template>
   <div>
-    <div>게시판</div>
     <router-view></router-view>
   </div>
 </template>
