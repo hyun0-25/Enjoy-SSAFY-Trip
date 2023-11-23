@@ -68,6 +68,15 @@ export const useAuthStore = defineStore(
     // ============== 사용자 정보 수정 ================
     const modify = async (userInfo) => {
       await axios.put(`api/user/${userInfo}`);
+      console.log("사용자 정보 수정");
+    };
+
+    // ============== 회원 탈퇴 ================
+    const deleteUser = async (userIId) => {
+      await axios.delete(`api/user/${userIId}`);
+      console.log("회원탈퇴");
+      clearUser();
+      logout();
     };
     //-------------------------------------------------
 
@@ -82,6 +91,7 @@ export const useAuthStore = defineStore(
       registUser,
       isCheck,
       modify,
+      deleteUser,
     };
   },
   //새로고침시 데이터 유지를 위한 설정(localStorage에 저장해서 불러오는 방식)

@@ -1,5 +1,31 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { useBoardStore } from "@/store/board";
+import { useNeswStore } from "@/store/news";
+const newsStore = useNeswStore();
+const boardStore = useBoardStore();
+
+//-----------contest
+const articles = computed(() => boardStore.articles);
+const params = ref({
+  key: "", //조건 검색 시 컬럼명
+  word: "", //해당 컬럼에 일치하는 데이터
+});
+
+//목록 조회
+boardStore.getArticles(params.value, "contest");
+//-----------contest end
+//---------- hot
+const articlesHot = computed(() => boardStore.articles);
+
+const paramsHot = ref({
+  key: "", //조건 검색 시 컬럼명
+  word: "", //해당 컬럼에 일치하는 데이터
+});
+boardStore.getArticles(paramsHot.value, "hot");
+
+//---------- hot end
+
 //hot place 정보
 const hotPlaceInfo = ref([
   {
@@ -56,7 +82,40 @@ const toggleButton = (index) => {
   }
   hpButtons.value[index].show = !hpButtons.value[index].show;
 };
-// hot place 확대,축소---
+// 뉴스 크롤링
+const getNews = computed(() => newsStore.news);
+const neswParams = ref({
+  key: "",
+  word: "",
+});
+newsStore.listNews();
+const newsDum = ref([
+  {
+    company: "뉴시스",
+    title: "임시공휴일 해외여행 급증…국내 숙박비 11분기 만에 최대 감소",
+    url: "https://www.newsis.com/view/?id=NISX20231123_0002533291&cID=10401&pID=10400",
+  },
+  {
+    company: "조선일보",
+    title: "[류동현의 예술여행] [5] 한국 최초의 ‘카페’, 정관헌",
+    url: "https://www.chosun.com/opinion/specialist_column/2023/11/24/HZR46OHSWVDDBOIELDYUCYBE2M/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news",
+  },
+  {
+    company: "이데일리",
+    title: "진시황 무덤을 발굴하지 않는 이유는…中 고대 수도 시안 [여행]",
+    url: "https://www.edaily.co.kr/news/read?newsId=01190646635809000&mediaCodeNo=257&OutLnkChk=Y",
+  },
+  {
+    company: "연합뉴스",
+    title: "[K스토리] '나도 사진작가다' 연합뉴스 여행자학교 사진전",
+    url: "https://www.yna.co.kr/view/MYH20231123006300528?input=1197m",
+  },
+  {
+    company: "경남도민일보",
+    title: "[세대공감]팔레스타인 서안지구 여행기",
+    url: "https://www.idomin.com/news/articleView.html?idxno=839936",
+  },
+]);
 
 //---
 </script>
@@ -68,28 +127,28 @@ const toggleButton = (index) => {
     <v-card class="mx-auto" height="auto">
       <v-card-text class="font-weight-medium mt-12 text-center text-subtitle-1">
         <!-- MZ main -->
-        <h2>MZ</h2>
-        <v-carousel>
-          <v-carousel-item
-            src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-            cover
-          ></v-carousel-item>
+        <div>
+          <v-carousel>
+            <v-carousel-item
+              src="https://dimg.donga.com/wps/NEWS/IMAGE/2022/11/05/116328493.1.edit.jpg"
+            ></v-carousel-item>
 
-          <v-carousel-item
-            src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg"
-            cover
-          ></v-carousel-item>
+            <v-carousel-item
+              src="https://cdn.lecturernews.com/news/photo/201809/7434_19046_3811.jpg"
+              cover
+            ></v-carousel-item>
 
-          <v-carousel-item
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            cover
-          ></v-carousel-item>
-        </v-carousel>
+            <v-carousel-item
+              src="https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTBfMjg4/MDAxNTc1OTU3MTQ1MTU1.pH-PUmgINJ29hgr1Qh8ZQr3jKdYR5IIzWDPkP_xLGpUg.iJnGDLYq3vduN4GzOMJKX-FQG1LCDSr3I3Juo0VoAJ8g.JPEG.kjchol123/%EC%A0%95%EB%8F%99%EC%A7%84.jpg?type=w800"
+              cover
+            ></v-carousel-item>
+          </v-carousel>
+        </div>
         <!-- MZ Hot Place -->
         <h2>HOT PLACE</h2>
         <div>
           <v-layout row>
-            <!-- HOT PLACE 1 start-->
+            <!-- HOT PLACE start-->
             <v-flex
               xs12
               sm6
@@ -132,69 +191,42 @@ const toggleButton = (index) => {
                 </v-slide-y-transition>
               </v-card>
             </v-flex>
-            <!-- HOT PLACE 1 end-->
+            <!-- HOT PLACE end-->
           </v-layout>
         </div>
-        <v-container>
-          <!-- hover 비율 바꾸기 -->
-          <!-- 시안1 -->
-          <v-row>
-            <v-col cols="12" md="4">
-              <v-skeleton-loader
-                class="mx-auto border"
-                max-width="300"
-                type="image, article"
-              ></v-skeleton-loader>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-skeleton-loader
-                class="mx-auto border"
-                max-width="300"
-                type="image, article"
-              ></v-skeleton-loader>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-skeleton-loader
-                class="mx-auto border"
-                max-width="300"
-                type="image, article"
-              ></v-skeleton-loader>
-            </v-col>
-          </v-row>
-        </v-container>
-        <!-- 시안2 -->
+
+        <!-- hover 비율 바꾸기 -->
+
+        <!-- END Hot Place -->
+
+        <!-- Contest -->
         <div>
-          <v-container>
-            <v-card height="400">
-              <v-img
-                src="https://picsum.photos/seed/picsum/1000/600"
-                class="bg-grey-lighten-2"
-              ></v-img
-            ></v-card>
-          </v-container>
-        </div>
-        <!-- END MZ Hot Place -->
-        <!-- MZ Contest -->
-        <div>
-          <h2>MZ Contest</h2>
+          <h2>Contest</h2>
           <br />
           <v-container>
             <v-row>
-              <v-col v-for="n in 3" :key="n" cols="4">
+              <v-col v-for="card in articles" :key="card.title" :cols="4">
                 <v-card>
+                  <!-- 콘테스트 사진 -->
                   <v-img
-                    src="https://picsum.photos/350/165?random"
-                    max-height="350"
-                    class="bg-grey-lighten-2"
+                    :src="card.src"
+                    class="align-end"
+                    gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+                    height="200px"
+                    cover
                   ></v-img>
+                  <!-- class="bg-grey-lighten-2" -->
+                  <!-- 콘테스트 게시글 제목 -->
                   <v-card-title class="text-h6">
-                    콘테스트
-                    <v-btn
-                      class="ma-2"
-                      variant="text"
-                      icon="mdi-thumb-up"
-                      color="blue-lighten-2"
-                    ></v-btn
+                    {{ card.title }}
+                    <!-- 종아요 버튼 -->
+                    <RouterLink :to="{ name: 'contest-list' }">
+                      <v-btn
+                        class="ma-2"
+                        variant="text"
+                        icon="mdi-thumb-up"
+                        color="blue-lighten-2"
+                      ></v-btn></RouterLink
                   ></v-card-title>
                 </v-card>
               </v-col>
@@ -208,21 +240,16 @@ const toggleButton = (index) => {
           <v-table>
             <thead>
               <tr>
+                <th class="text-left">뉴스 발행처</th>
                 <th class="text-left">뉴스 타이틀</th>
-                <th class="text-left">뉴스 미리보기</th>
               </tr>
             </thead>
             <tbody>
-              <!-- <tr v-for="item in desserts" :key="item.name">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.calories }}</td> </tr>-->
-              <tr>
-                <td>이런저런 뉴스</td>
-                <td>저런이런 뉴스</td>
-              </tr>
-              <tr>
-                <td>이런저런 뉴스</td>
-                <td>저런이런 뉴스</td>
+              <tr v-for="(item, index) in newsDum" :key="index">
+                <td>{{ item.company }}</td>
+                <a :href="item.url">
+                  <td>{{ item.title }}</td>
+                </a>
               </tr>
             </tbody>
           </v-table>
@@ -244,12 +271,19 @@ v-container {
 .image-col {
   flex: 1;
 }
-
+div {
+  boarder: 20px;
+}
 .hoverable-image {
   transition: width 0.3s;
   min-width: 100px;
 }
 .hoverable-image:hover {
   width: 500px; /* 넓게 하고 싶은 크기로 조절 */
+}
+a {
+  text-align: justify;
+  text-decoration: none;
+  color: black;
 }
 </style>

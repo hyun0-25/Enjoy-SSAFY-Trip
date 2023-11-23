@@ -80,6 +80,14 @@ const previewFile = () => {
                   style="width: 500px"
                   :rules="[(v) => !!v || '제목은 필수입니다.']"
                 ></v-text-field>
+                <v-textarea
+                  v-model="writeForm.content"
+                  label="내용"
+                  outlined
+                  rows="13"
+                  style="width: 730px"
+                  :rules="[(v) => !!v || '내용은 필수입니다.']"
+                ></v-textarea>
                 <v-col>
                   <img :src="preview" />
                   <v-file-input v-model="file" @change="previewFile" />
