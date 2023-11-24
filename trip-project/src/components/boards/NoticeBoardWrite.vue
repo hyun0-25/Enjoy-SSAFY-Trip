@@ -36,10 +36,12 @@ const write = async () => {
       }
       formData.append("title", writeForm.value.title);
       formData.append("content", writeForm.value.content);
+      formData.append("boardType", writeForm.value.boardType);
+      formData.append("userId", writeForm.value.userId);
       // for (let key of formData.keys()) {
       //   console.log(key, ":", formData.get(key));
       // }
-      await boardStore.writeArticle(modifyForm, formData);
+      await boardStore.writeArticle(formData);
       router.push({ path: "/board/notice" });
       alert("등록 성공");
     } catch (error) {

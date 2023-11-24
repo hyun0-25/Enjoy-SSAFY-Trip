@@ -18,14 +18,42 @@ const { courseId } = route.params;
 //2.반응형 데이터 연결하기
 const attractions = computed(() => attractionStore.attractions);
 const courseList = computed(() => mylocationStore.courseList);
-
+const attraction = computed(() => mylocationStore.attraction);
 onMounted(async () => {
   await mylocationStore.getCourseList(courseId);
+
+  PickstartDate.value = new Date(courseList.value[0].startDate);
+  PickendDate.value = new Date(courseList.value[0].endDate);
+  // const datesize =
+  //     (dataE.getTime() - dataS.getTime()) / (1000 * 60 * 60 * 24) + 1;
+  // console.log(listsize.value);
+  size.value = listsize.value =
+    (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
+      (1000 * 60 * 60 * 24) +
+    1;
+  console.log(listsize.value);
+  for (let i = 0; i < listsize.value; i++) {
+    tripview.value.push(new Array());
+
+    const filtertrip = courseList.value.filter((x) => x.courseOrder == i);
+    for (let j = 0; j < filtertrip.length; j++) {
+      await getoneattraction(filtertrip, j);
+      tripview.value[i].push(attraction.value);
+      console.log(attraction.value);
+    }
+  }
+  trip_title.value = courseList.value[0].courseName;
+  tripDateFormat.value =
+    courseList.value[0].startDate + " ~ " + courseList.value[0].endDate;
+  console.log(tripview.value);
+  // confirm();
 
   if (window.kakao && window.kakao.maps) loadMap();
   else loadScript();
 });
-
+const getoneattraction = async (filtertrip, j) => {
+  await mylocationStore.getAttraction(filtertrip[j].contentId);
+};
 const params = ref({
   sido: -1, //시도
   gugun: -1, //구군
@@ -247,19 +275,27 @@ const MaxDate = ref(null);
 
 watch(PickstartDate, () => {
   var sdate = new Date(PickstartDate.value);
-  // console.log(sdate);
+  console.log(sdate);
   var mdate = new Date(sdate.setDate(sdate.getDate() + 6));
   MaxDate.value = mdate;
   // console.log(MaxDate.value);
   if (PickstartDate.value != null) {
-    startDateFormat.value = PickstartDate.value.toISOString().slice(0, 10);
+    let offset = PickstartDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset = new Date(PickstartDate.value.getTime() - offset);
+    // return dateOffset.toISOString();
+    startDateFormat.value = dateOffset.toISOString().slice(0, 10);
+    console.log(startDateFormat.value);
   }
+  console.log(PickstartDate.value);
 });
 watch(PickendDate, () => {
   if (PickendDate.value != null) {
-    endDateFormat.value = PickendDate.value.toISOString().slice(0, 10);
+    let offset = PickendDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset = new Date(PickendDate.value.getTime() - offset);
+    endDateFormat.value = dateOffset.toISOString().slice(0, 10);
   }
 });
+
 const cancel = () => {
   caldialog.value = false;
   // 취소 버튼을 눌렀을 때의 로직 추가
@@ -285,6 +321,7 @@ const confirm = () => {
       (PickendDate.value.getTime() - PickstartDate.value.getTime()) /
         (1000 * 60 * 60 * 24) +
       1;
+
     for (var i = 0; i < size.value; i++) {
       tripview.value.push(new Array());
     }
@@ -309,19 +346,27 @@ const confirm = () => {
         1;
     }
   }
+  listsize.value = Math.round(listsize.value);
+  size.value = Math.round(size.value);
 
   // 확인 버튼을 눌렀을 때의 로직 추가
   caldialog.value = false;
   startDate.value = PickstartDate.value;
   endDate.value = PickendDate.value;
+  console.log(startDate.value);
   if (startDate.value != null && endDate.value != null) {
-    startDateFormat.value = startDate.value.toISOString().slice(0, 10);
-    endDateFormat.value = endDate.value.toISOString().slice(0, 10);
+    let offset = startDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset = new Date(startDate.value.getTime() - offset);
+    startDateFormat.value = dateOffset.toISOString().slice(0, 10);
+
+    let offset2 = endDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset2 = new Date(endDate.value.getTime() - offset2);
+    endDateFormat.value = dateOffset2.toISOString().slice(0, 10);
+
     tripDateFormat.value = startDateFormat.value + " ~ " + endDateFormat.value;
     //view에 보일 일정
     tripview.value = tripview.value.slice(0, listsize.value);
   }
-  console.log(listsize.value);
 };
 
 const openModal = () => {
@@ -338,7 +383,7 @@ const mylocationStore = useMyLocationStore();
 
 const listForm = ref([]);
 
-const addAllMyLocation = async () => {
+const modifyAllMyLocation = async () => {
   if (PickstartDate.value == null || PickendDate.value == null) {
     alert("일정을 선택해주세요!");
     return;
@@ -370,8 +415,9 @@ const addAllMyLocation = async () => {
     }
   }
   try {
-    await mylocationStore.addMyLocations(listForm.value);
-    router.push({ path: "/map" });
+    await mylocationStore.modifyMyLocations(courseId, listForm.value);
+    router.push({ path: "/user/mypage" });
+    alert("수정 완료!");
   } catch (error) {
     console.log("등록 에러 내용:", error);
     alert("등록 실패");
@@ -589,8 +635,8 @@ const getSearchArticles = (searchKeyword) => {
           </v-list>
         </v-container>
       </v-card>
-      <v-btn class="ms-2" variant="outlined" @click="addAllMyLocation()">
-        여행생성
+      <v-btn class="ms-2" variant="outlined" @click="modifyAllMyLocation()">
+        여행수정
       </v-btn>
       <v-list-item @click="toggleList" class="slide-btn">
         <h6>일정</h6>

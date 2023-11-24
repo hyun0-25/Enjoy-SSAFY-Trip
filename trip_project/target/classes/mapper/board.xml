@@ -61,7 +61,7 @@
 		</if>
 	</sql>
 
-	<select id="listArticle" parameterType="map" resultMap="board">
+	<select id="listArticle" parameterType="map" resultMap="viewArticle">
 		select b.board_id, b.user_id, b.board_type, b.title, b.content, b.hit, b.register_date, b.total_like, m.nickname
 		from board b, members m 
 		where b.user_id = m.user_id
@@ -69,7 +69,7 @@
 		order by b.board_id desc
 	</select>
 	
-	<select id="listTypeArticle" parameterType="map" resultMap="board">
+	<select id="listTypeArticle" parameterType="map" resultMap="viewArticle">
 		select b.board_id, b.user_id, b.board_type, b.title, b.content, b.hit, b.register_date, b.total_like, m.nickname
 		from board b, members m 
 		where b.user_id = m.user_id

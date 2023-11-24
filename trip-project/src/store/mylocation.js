@@ -14,9 +14,17 @@ export const useMyLocationStore = defineStore("mylocation", () => {
   /* =======여행 경로 삭제 Start========== */
   const deleteAllMyLocation = async (courseId) => {
     console.log(`deleteAllMyLocation(${courseId}) 요청 보냄`);
-    await axios.delete(`/api/mylocation/${boardType}/${boardId}`);
+    await axios.delete(`/api/mylocation/${courseId}`);
   };
   /* =======여행 경로 삭제 End========== */
+
+  /* =======여행 경로 수정 Start========== */
+  const modifyMyLocations = async (courseId, listForm) => {
+    console.log(`modifyMyLocations(${courseId}) 요청 보냄 ${listForm}`);
+    await axios.delete(`/api/map//mylocation/${courseId}`);
+    return await axios.post(`/api/map/mylocation`, listForm);
+  };
+  /* =======여행 경로 수정 End========== */
 
   /* =======내 여행 목록 Start========== */
   const mylist = ref([]); //목록 데이터
@@ -67,5 +75,6 @@ export const useMyLocationStore = defineStore("mylocation", () => {
     attraction,
     getAttraction,
     deleteCourse,
+    modifyMyLocations,
   };
 });

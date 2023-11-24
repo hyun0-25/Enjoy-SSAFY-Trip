@@ -14,6 +14,16 @@ const params = ref({
 
 //목록 조회
 boardStore.getArticles(params.value, "contest");
+
+const imgview = (boardId) => {
+  const article = articles.value.filter((a) => a.boardId == boardId);
+  console.log(article);
+  if (article[0].fileInfos[0] != null) {
+    const file = article[0].fileInfos[0];
+    console.log(`http://localhost/images/${file.saveFile}`);
+    return `http://localhost/images/${file.saveFile}`;
+  }
+};
 // 좋아요
 const good = ref(false);
 const like = (boardId) => {
@@ -29,17 +39,12 @@ const like = (boardId) => {
     <RouterLink :to="{ name: 'contest-write' }"
       ><v-btn class="button">글쓰기</v-btn></RouterLink
     >
+
     <v-container fluid>
       <v-row dense>
         <v-col v-for="card in articles" :key="card.title" :cols="4">
           <v-card>
-            <v-img
-              :src="card.src"
-              class="align-end"
-              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-              height="200px"
-              cover
-            >
+            <v-img :src="imgview(card.boardId)" height="200px" cover>
               <v-card-title
                 class="text-white"
                 v-text="card.title"

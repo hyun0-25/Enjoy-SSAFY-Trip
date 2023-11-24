@@ -114,22 +114,6 @@ const loadMap = () => {
     level: 3,
   };
   map = new kakao.maps.Map(container.value, options);
-
-  // //2. 마커 찍기
-  // const marker = new kakao.maps.Marker({
-  //   position: map.value.getCenter(),
-  // });
-  // marker.setMap(map.value);
-
-  // //3. 지도 click 이벤트 핸들링
-  // kakao.maps.event.addListener(map.value, "click", (mouseEvent) => {
-  //   // 클릭한 위도, 경도 정보를 가져옵니다
-  //   const latlng = mouseEvent.latLng;
-  //   // 마커 위치를 클릭한 위치로 옮깁니다
-  //   marker.setPosition(latlng);
-
-  //   message.value = `<h3>클릭한 위치의 위도는 ${latlng.getLat()}이고, 경도는 ${latlng.getLng()} 입니다</h3>`;
-  // });
 };
 
 const selectAttraction = ref({});
@@ -180,7 +164,6 @@ const loadMarkers = () => {
       position: position.latlng, // 마커를 표시할 위치
       title: position.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨.
       clickable: true, // // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
-      // image: markerImage, // 마커의 이미지
     });
     markers.value.push(marker);
     marker.setMap(map);
@@ -188,15 +171,6 @@ const loadMarkers = () => {
   if (positions.value.length > 0) {
     map.panTo(positions.value[0].latlng);
   }
-
-  // 4. 지도를 이동시켜주기
-  // 배열.reduce( (누적값, 현재값, 인덱스, 요소)=>{ return 결과값}, 초기값);
-  // const bounds = positions.value.reduce(
-  //   (bounds, position) => bounds.extend(position.latlng),
-  //   new kakao.maps.LatLngBounds()
-  // );
-
-  // map.setBounds(bounds);
 };
 
 const deleteMarkers = () => {
@@ -241,17 +215,24 @@ const MaxDate = ref(null);
 
 watch(PickstartDate, () => {
   var sdate = new Date(PickstartDate.value);
-  // console.log(sdate);
+  console.log(sdate);
   var mdate = new Date(sdate.setDate(sdate.getDate() + 6));
   MaxDate.value = mdate;
   // console.log(MaxDate.value);
   if (PickstartDate.value != null) {
-    startDateFormat.value = PickstartDate.value.toISOString().slice(0, 10);
+    let offset = PickstartDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset = new Date(PickstartDate.value.getTime() - offset);
+    // return dateOffset.toISOString();
+    startDateFormat.value = dateOffset.toISOString().slice(0, 10);
+    console.log(startDateFormat.value);
   }
+  console.log(PickstartDate.value);
 });
 watch(PickendDate, () => {
   if (PickendDate.value != null) {
-    endDateFormat.value = PickendDate.value.toISOString().slice(0, 10);
+    let offset = PickendDate.value.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    let dateOffset = new Date(PickendDate.value.getTime() - offset);
+    endDateFormat.value = dateOffset.toISOString().slice(0, 10);
   }
 });
 const cancel = () => {

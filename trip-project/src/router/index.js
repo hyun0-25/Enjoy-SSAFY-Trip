@@ -23,11 +23,6 @@ const router = createRouter({
           component: () => import("@/components/boards/NoticeBoardList.vue"),
         },
         {
-          path: "free",
-          name: "free-list",
-          component: () => import("@/components/boards/FreeBoardList.vue"),
-        },
-        {
           path: "hot",
           name: "hot-list",
           component: () => import("@/components/boards/HotBoardList.vue"),
