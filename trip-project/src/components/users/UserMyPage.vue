@@ -12,7 +12,6 @@ const linksA = [
   ["mdi-account-multiple-minus", "내 정보 수정", "/user/modify"],
   ["mdi-send", "게시판", "/board/hot"],
 ];
-const drawer = ref(null);
 
 // 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
 const dialog = ref(false);
@@ -87,7 +86,7 @@ const deathUser = async (userId) => {
                 </v-list>
               </v-col>
             </v-row>
-            <div>가입일 : {{ authStore.user.email }}</div>
+            <div>가입일 : {{ authStore.user.registerDate }}</div>
           </v-sheet>
 
           <v-divider></v-divider>
