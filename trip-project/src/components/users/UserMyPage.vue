@@ -9,8 +9,8 @@ const authStore = useAuthStore();
 const mylocationStore = useMyLocationStore();
 
 const linksA = [
-  ["mdi-account-multiple-minus", "전체 사용자 목록"],
-  ["mdi-send", "게시판"],
+  ["mdi-account-multiple-minus", "내 정보 수정", "/user/modify"],
+  ["mdi-send", "게시판", "/board/hot"],
 ];
 const drawer = ref(null);
 
@@ -29,10 +29,14 @@ const moveToTrip = (n) => {
   router.push({ path: `/map/detail/${n}` });
 };
 
+const goDetail = (url) => {
+  router.push(url);
+};
 // 회원 탈퇴
 const dialog2 = ref(false);
-const deathUser = async () => {
-  await authStore.deleteUser(authStore.user.userId);
+const deathUser = async (userId) => {
+  console.log("탈퇴 요청");
+  await authStore.deleteUser(userId);
   router.push("/");
 };
 </script>
@@ -82,7 +86,6 @@ const deathUser = async () => {
                   </v-list-item>
                 </v-list>
               </v-col>
-              {{ user }}
             </v-row>
             <div>가입일 : {{ authStore.user.email }}</div>
           </v-sheet>
@@ -95,11 +98,12 @@ const deathUser = async () => {
           <v-sheet rounded="lg">
             <v-list>
               <v-list-item
-                v-for="[icon, text] in linksA"
+                v-for="[icon, text, route] in linksA"
                 :key="icon"
                 :prepend-icon="icon"
                 :title="text"
                 link
+                @click="goDetail(route)"
                 ><v-divider></v-divider>
               </v-list-item>
             </v-list>
@@ -120,7 +124,10 @@ const deathUser = async () => {
                             >취소</v-btn
                           ></v-col
                         ><v-col>
-                          <v-btn color="primary" block @click="deathUser"
+                          <v-btn
+                            color="primary"
+                            block
+                            @click="deathUser(authStore.user.userId)"
                             >탈퇴</v-btn
                           >
                         </v-col>
@@ -136,15 +143,13 @@ const deathUser = async () => {
         <!-- 사이드 end-->
         <!-- 본 페이지 -->
         <v-col>
-          <v-sheet min-height="70vh" rounded="lg"
-            >.
+          <v-sheet min-height="70vh" rounded="lg">
             <v-row>
               <!-- 본 -->
               <v-col>
                 <v-card
                   class="mx-auto"
                   max-width="344"
-                  :info="outlined"
                   v-for="item in mylist"
                   :key="item.courseId"
                   link

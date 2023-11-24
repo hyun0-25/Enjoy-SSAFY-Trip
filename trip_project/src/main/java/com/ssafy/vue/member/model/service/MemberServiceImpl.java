@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.vue.map.model.service.MapService;
 import com.ssafy.vue.member.dto.MemberDto;
 import com.ssafy.vue.member.dto.MemberListDto;
 import com.ssafy.vue.member.model.mapper.MemberMapper;
@@ -61,7 +62,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void deleteMember(String userId) {
+		memberMapper.deleteCourse(userId);
 		memberMapper.deleteMember(userId);		
+				
 	}
 
 	@Override

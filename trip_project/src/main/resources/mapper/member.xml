@@ -60,6 +60,11 @@
 		delete from members
 		where user_id = #{userId}
 	</delete>
+	<delete id="deleteCourse" parameterType="String">
+		delete
+		from mylocation
+		where user_id = #{userId}
+	</delete>
 	
 <!-- token & login -->
 	
