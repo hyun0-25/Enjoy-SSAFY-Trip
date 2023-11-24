@@ -18,7 +18,6 @@
         ]"
       ></SearchBar>
     </v-card-title>
-
     <v-data-table
       v-model:page="page"
       :headers="headers"
@@ -28,12 +27,14 @@
       :loading="loading"
       loading-text="Loading... Please wait"
     >
-      <!-- <template v-slot:item="{ item }">
-        <tr @click="handleRowClick(item)"></tr>
-        <div>
-          {{ item.boardId }}
-        </div>
-      </template> -->
+      <template v-slot:item="{ item }">
+        <tr @click="goDetail(item.boardId)">
+          <td>{{ item.boardId }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.hit }}</td>
+          <td>{{ item.registerDate }}</td>
+        </tr>
+      </template>
 
       <template v-slot:bottom>
         <div class="text-center pt-2">
@@ -45,6 +46,7 @@
         </div>
       </template>
     </v-data-table>
+
     <RouterLink
       :to="{ name: 'notice-write' }"
       v-if="authStore.user.role == 'admin'"
@@ -106,8 +108,8 @@ const pageCount = computed(() =>
 );
 
 // 리스트를 눌러 해당 요소의 상세 페이지 이동
-const goDetail = () => {
-  // router.push("/board/notice/"+headers.value.title);
+const goDetail = (boardId) => {
+  router.push("/board/detail/" + boardId);
 };
 </script>
 <style scoped>

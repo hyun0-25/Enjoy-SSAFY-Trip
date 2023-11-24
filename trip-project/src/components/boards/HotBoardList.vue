@@ -7,6 +7,7 @@ import { ref, computed } from "vue";
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
 const loading = ref(true);
+const router = useRouter();
 
 //2.반응형 데이터 연결하기
 const articles = computed(() => boardStore.articles);
@@ -47,6 +48,10 @@ const headers = ref([
 const pageCount = computed(() =>
   Math.ceil(articles.value.length / itemsPerPage.value)
 );
+// 리스트를 눌러 해당 요소의 상세 페이지 이동
+const goDetail = (boardId) => {
+  router.push("/board/detail/" + boardId);
+};
 </script>
 
 <template>
@@ -75,10 +80,22 @@ const pageCount = computed(() =>
       v-model:page="page"
       :headers="headers"
       :items="articles"
+      item-key="boardId"
       :items-per-page="itemsPerPage"
       :loading="loading"
       loading-text="Loading... Please wait"
     >
+      <template v-slot:item="{ item }">
+        <tr @click="goDetail(item.boardId)">
+          <td>{{ item.boardId }}</td>
+          <td>{{ item.nickName }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.hit }}</td>
+          <td>{{ item.registerDate }}</td>
+          <td>{{ item.totalLike }}</td>
+        </tr>
+      </template>
+
       <template v-slot:bottom>
         <div class="text-center pt-2">
           <v-pagination

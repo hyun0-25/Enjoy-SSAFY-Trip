@@ -215,7 +215,7 @@ public class MemberController {
 	}
 
 	@ApiOperation(value = "회원 정보 수정", notes = "회원을 정보를 수정한다.",response=MemberDto.class)
-	@PutMapping("/{userId}")
+	@PutMapping
 	public ResponseEntity<?> updateMember(
 			@RequestBody @ApiParam(value = "회원 정보.", required = true) MemberDto member) {
 		log.info("회원 정보 수정 - {}",member);

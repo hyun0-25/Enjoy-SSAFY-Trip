@@ -19,6 +19,7 @@ public interface MemberMapper {
 	MemberDto getMember(String userId);
 	void updateMember(MemberDto member);
 	void deleteMember(String userId);
+	void deleteCourse(String userId);
 	
 	
 }

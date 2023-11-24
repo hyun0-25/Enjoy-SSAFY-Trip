@@ -224,7 +224,7 @@ const newsDum = ref([
                   <!-- class="bg-grey-lighten-2" -->
                   <!-- 콘테스트 게시글 제목 -->
                   <v-card-title class="text-h6">
-                    {{ card.title }}
+                    {{ card.title.slice(0, 7) }} ...
                     <!-- 종아요 버튼 -->
                     <RouterLink :to="{ name: 'contest-list' }">
                       <v-btn

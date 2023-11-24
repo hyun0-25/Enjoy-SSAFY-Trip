@@ -41,7 +41,7 @@ const dialog = ref(false);
 const modify = async () => {
   try {
     if (userInfo.userPassword == userInfo.againPassword) {
-      await authStore.login(userInfo.value);
+      await authStore.modify(userInfo.value);
       alert("재로그인 해주세요.");
     }
   } catch (error) {
@@ -87,28 +87,28 @@ const modify = async () => {
       >
       </v-text-field>
       <!-- 이메일 -->
-      <v-text-field v-model="userInfo.email" label="이메일" id="eamil">
+      <v-text-field v-model="userInfo.email" label="이메일" id="email">
       </v-text-field>
       <!-- 생일 -->
-      <div class="text-center">
-        <v-text-field
+      <!-- <div class="text-center"> -->
+      <!-- <v-text-field
           v-model="userInfo.birthday"
           label="생일"
           @click="dialog = true"
-        >
-          <!-- {{ userInfo.birthday }} -->
-        </v-text-field>
+        > -->
+      <!-- {{ userInfo.birthday }} -->
+      <!-- </v-text-field> -->
 
-        <v-dialog v-model="dialog" width="auto">
+      <!-- <v-dialog v-model="dialog" width="auto">
           <v-date-picker></v-date-picker>
           <v-btn @click="saveDate">확인</v-btn>
         </v-dialog>
-      </div>
+      </div> -->
 
       <!-- 프로필 사진 -->
-      <P>
+      <!-- <P>
         <v-file-input label="프로필 사진 File input"></v-file-input>
-      </P>
+      </P> -->
       <!-- button -->
 
       <v-btn @click="modify"> 수정하기 </v-btn>

@@ -67,15 +67,14 @@ export const useAuthStore = defineStore(
     };
     // ============== 사용자 정보 수정 ================
     const modify = async (userInfo) => {
-      await axios.put(`api/user/${userInfo}`);
+      await axios.put(`/api/user/${userInfo}`);
       console.log("사용자 정보 수정");
     };
 
     // ============== 회원 탈퇴 ================
-    const deleteUser = async (userIId) => {
-      await axios.delete(`api/user/${userIId}`);
+    const deleteUser = async (userId) => {
+      await axios.delete(`/api/user/${userId}`);
       console.log("회원탈퇴");
-      clearUser();
       logout();
     };
     //-------------------------------------------------
