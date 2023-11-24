@@ -28,7 +28,7 @@ const deleteArticle = async () => {
       article.value.boardType,
       article.value.boardId
     );
-    router.push("/board/notice");
+    router.push("/board/hot");
     alert("삭제 완료");
   } catch (error) {
     console.log("삭제 에러:", error);
@@ -38,7 +38,7 @@ const deleteArticle = async () => {
 
 const cancel = async () => {
   if (!confirm("취소하시겠습니까?")) return;
-  router.push({ path: "/board/notice" });
+  router.push({ path: "/board/hot" });
 };
 
 //로그인 유저정보

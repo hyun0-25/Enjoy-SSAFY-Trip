@@ -109,7 +109,7 @@ const pageCount = computed(() =>
 
 // 리스트를 눌러 해당 요소의 상세 페이지 이동
 const goDetail = (boardId) => {
-  router.push("/board/detail/" + boardId);
+  router.push("/board/notice/detail/" + boardId);
 };
 </script>
 <style scoped>

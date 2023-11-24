@@ -202,7 +202,13 @@ const deleteCourse = async () => {
             ></v-text-field>
             <p>여행 일정</p>
             <h5>{{ tripDateFormat }}</h5>
-            <v-btn style="margin-bottom: 5px">여행 수정</v-btn>
+            <RouterLink
+              :to="{
+                name: 'trip-modify',
+                params: { courseId: courseId },
+              }"
+              ><v-btn style="margin-bottom: 5px">여행 수정</v-btn></RouterLink
+            >
             <v-btn style="margin-bottom: 5px" @click="deleteCourse()"
               >여행 삭제</v-btn
             >

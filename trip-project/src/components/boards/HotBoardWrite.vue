@@ -22,7 +22,7 @@ const write = async () => {
       if (!confirm("이대로 등록하시겠습니까?")) return;
 
       await boardStore.writeArticle(writeForm.value);
-      router.push({ path: "/board/notice" });
+      router.push({ path: "/board/hot" });
       alert("등록 성공");
     } catch (error) {
       //등록 시 에러 발생
@@ -34,7 +34,7 @@ const write = async () => {
 
 const cancel = async () => {
   if (!confirm("취소하시겠습니까?")) return;
-  router.push({ path: "/board/notice" });
+  router.push({ path: "/board/hot" });
 };
 
 //파일 업로드

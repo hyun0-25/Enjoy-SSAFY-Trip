@@ -23,11 +23,6 @@ const router = createRouter({
           component: () => import("@/components/boards/NoticeBoardList.vue"),
         },
         {
-          path: "free",
-          name: "free-list",
-          component: () => import("@/components/boards/FreeBoardList.vue"),
-        },
-        {
           path: "hot",
           name: "hot-list",
           component: () => import("@/components/boards/HotBoardList.vue"),
@@ -53,9 +48,19 @@ const router = createRouter({
           component: () => import("@/components/boards/NoticeBoardWrite.vue"),
         },
         {
-          path: "detail/:boardId",
-          name: "board-detail",
-          component: () => import("@/components/boards/BoardDetail.vue"),
+          path: "hot/detail/:boardId",
+          name: "hot-detail",
+          component: () => import("@/components/boards/HotBoardDetail.vue"),
+        },
+        {
+          path: "notice/detail/:boardId",
+          name: "notice-detail",
+          component: () => import("@/components/boards/NoticeBoardDetail.vue"),
+        },
+        {
+          path: "contest/detail/:boardId",
+          name: "contest-detail",
+          component: () => import("@/components/boards/ContestBoardDetail.vue"),
         },
         //BoardModify
         {
@@ -65,6 +70,11 @@ const router = createRouter({
           // meta: { requiresAuth: true },
           //관리자 권한 또한 필요한 경우
           // meta: { requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: "modify/contest/:boardId",
+          name: "contest-modify",
+          component: () => import("@/components/boards/ContestBoardModify.vue"),
         },
         //Trip Mate
         {
