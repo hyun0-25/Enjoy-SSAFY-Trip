@@ -28,7 +28,7 @@ const deleteArticle = async () => {
       article.value.boardType,
       article.value.boardId
     );
-    router.push("/board/notice");
+    router.push("/board/contest");
     alert("삭제 완료");
   } catch (error) {
     console.log("삭제 에러:", error);
@@ -38,7 +38,7 @@ const deleteArticle = async () => {
 
 const cancel = async () => {
   if (!confirm("취소하시겠습니까?")) return;
-  router.push({ path: "/board/notice" });
+  router.push({ path: "/board/contest" });
 };
 
 //로그인 유저정보
@@ -137,11 +137,6 @@ const previewFile = () => {
     );
   }
 };
-
-const validateCheck = () => {
-  // 추가 버튼 클릭 시 유효성 검사 등 추가 로직 구현
-  console.log("파일 추가 버튼이 클릭되었습니다.");
-};
 </script>
 
 <template>
@@ -166,45 +161,37 @@ const validateCheck = () => {
               <div style="width: 300px; margin-left: 100px; padding-top: 10px">
                 좋아요수 : {{ article.totalLike }}
               </div>
-              <v-textarea
-                outlined
-                rows="13"
-                style="width: 730px; margin-left: 100px; padding-top: 10px"
-                readonly
-                label="내용"
-                v-model="article.content"
-              ></v-textarea>
-              <v-col>
+
+              <v-col style="padding: 10px 100px">
                 <img :src="imgview" />
               </v-col>
-
-              <v-btn width="100px" style="margin-bottom: 30px" @click="cancel()"
-                >뒤로가기</v-btn
-              >
-              <!-- 수정 화면 이동 -->
-              <!-- 로그인 유저정보랑 같은 경우만 수정,삭제 버튼 생김. role(관리자)이면 수정,삭제 생김-->
-              <div
-                v-if="
-                  userId === article.userId || authStore.user.role == 'admin'
-                "
-              >
-                <RouterLink
-                  :to="{
-                    name: 'board-modify',
-                    params: { boardId: article.boardId },
-                  }"
-                  ><v-btn
+              <div style="padding: 10px 100px">
+                <v-btn width="100px" style="margin: 30px 0px" @click="cancel()"
+                  >뒤로가기</v-btn
+                >
+                <!-- 수정 화면 이동 -->
+                <!-- 로그인 유저정보랑 같은 경우만 수정,삭제 버튼 생김. role(관리자)이면 수정,삭제 생김-->
+                <div
+                  v-if="
+                    userId === article.userId || authStore.user.role == 'admin'
+                  "
+                >
+                  <RouterLink
+                    :to="{
+                      name: 'contest-modify',
+                      params: { boardId: article.boardId },
+                    }"
+                    ><v-btn width="100px" style="margin-bottom: 20px"
+                      >수정</v-btn
+                    ></RouterLink
+                  >
+                  <v-btn
                     width="100px"
                     style="margin-left: 30px; margin-bottom: 20px"
-                    >수정</v-btn
-                  ></RouterLink
-                >
-                <v-btn
-                  width="100px"
-                  style="margin-left: 30px; margin-bottom: 20px"
-                  @click="deleteArticle()"
-                  >삭제</v-btn
-                >
+                    @click="deleteArticle()"
+                    >삭제</v-btn
+                  >
+                </div>
               </div>
             </v-card>
           </v-col>
@@ -212,84 +199,6 @@ const validateCheck = () => {
         </v-row>
       </v-container>
     </v-main>
-    <!-- comment start -->
-    <v-container v-if="article.boardType === 'hot'">
-      <v-list two-line>
-        <v-list-subheader>댓글</v-list-subheader>
-
-        <div v-if="comments.length > 0">
-          <v-list-item v-for="(comment, index) in comments" :key="index">
-            <v-list-item-title class="font-weight-bold">{{
-              comment.nickName
-            }}</v-list-item-title>
-            <v-list-item-subtitle>{{
-              comment.registerDate
-            }}</v-list-item-subtitle>
-            <template v-if="index !== editedCommentIndex">
-              <v-list-item-subtitle>{{ comment.content }}</v-list-item-subtitle>
-              <!-- 권한 설정 -->
-              <div
-                v-if="
-                  comment.userId === userId || authStore.user.role == 'admin'
-                "
-              >
-                <v-btn style="margin-bottom: 10px" @click="modifyComment(index)"
-                  >수정</v-btn
-                >
-                <v-btn
-                  style="margin-bottom: 10px"
-                  @click="deleteComment(comment.commentId)"
-                  >삭제</v-btn
-                >
-              </div>
-            </template>
-            <template v-else>
-              <v-text-field
-                v-model="editedComment.content"
-                label="댓글 내용"
-                required
-                :rules="[(v) => !!v || '댓글을 입력해주세요.']"
-              ></v-text-field>
-              <v-btn
-                @click="saveEdit"
-                color="primary"
-                v-if="editedCommentIndex !== -1"
-                >저장</v-btn
-              >
-              <v-btn
-                @click="cancelEdit"
-                color="primary"
-                v-if="editedCommentIndex !== -1"
-                >취소</v-btn
-              >
-            </template>
-            <!-- <v-list-item-subtitle>{{ comment.content }}</v-list-item-subtitle> -->
-          </v-list-item>
-        </div>
-
-        <div v-else>댓글이 없습니다.</div>
-
-        <v-divider></v-divider>
-
-        <v-form ref="form" @submit.prevent="addComment">
-          <v-list-item>
-            <v-text-field
-              v-model="article.nickName"
-              label="작성자"
-              required
-              readonly
-            ></v-text-field>
-            <v-text-field
-              v-model="newComment.content"
-              label="댓글 내용"
-              required
-              :rules="[(v) => !!v || '댓글을 입력해주세요.']"
-            ></v-text-field>
-            <v-btn type="submit" color="primary">댓글 추가</v-btn>
-          </v-list-item>
-        </v-form>
-      </v-list>
-    </v-container>
   </v-app>
 </template>
 

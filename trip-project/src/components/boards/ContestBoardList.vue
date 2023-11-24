@@ -1,9 +1,10 @@
 <script setup>
 import { ref, computed } from "vue";
+import { RouterLink, useRouter } from "vue-router";
 //1.store 객체 얻어오기
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
-
+const router = useRouter();
 //2.반응형 데이터 연결하기
 const articles = computed(() => boardStore.articles);
 
@@ -17,13 +18,18 @@ boardStore.getArticles(params.value, "contest");
 
 const imgview = (boardId) => {
   const article = articles.value.filter((a) => a.boardId == boardId);
-  console.log(article);
+  // console.log(article);
   if (article[0].fileInfos[0] != null) {
     const file = article[0].fileInfos[0];
-    console.log(`http://localhost/images/${file.saveFile}`);
+    // console.log(`http://localhost/images/${file.saveFile}`);
     return `http://localhost/images/${file.saveFile}`;
   }
 };
+
+const goDetail = (boardId) => {
+  router.push("/board/contest/detail/" + boardId);
+};
+
 // 좋아요
 const good = ref(false);
 const like = (boardId) => {
@@ -43,7 +49,7 @@ const like = (boardId) => {
     <v-container fluid>
       <v-row dense>
         <v-col v-for="card in articles" :key="card.title" :cols="4">
-          <v-card>
+          <v-card @click="goDetail(card.boardId)">
             <v-img :src="imgview(card.boardId)" height="200px" cover>
               <v-card-title
                 class="text-white"
