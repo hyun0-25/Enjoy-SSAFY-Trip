@@ -34,6 +34,7 @@ export const useAuthStore = defineStore(
       user.value.role = decoded.role;
       user.value.email = decoded.email;
       user.value.userType = decoded.userType;
+      user.value.registerDate = decoded.registerDate;
 
       //아이디 기억
       isRemember.value
@@ -50,6 +51,7 @@ export const useAuthStore = defineStore(
       user.value.role = "";
       user.value.email = "";
       user.value.userType = "";
+      user.value.registerDate = "";
       token.value = "";
     };
     //===================회원가입 관련================
@@ -67,8 +69,9 @@ export const useAuthStore = defineStore(
     };
     // ============== 사용자 정보 수정 ================
     const modify = async (userInfo) => {
-      await axios.put(`/api/user/${userInfo}`);
-      console.log("사용자 정보 수정");
+      const { data } = await axios.put(`/api/user`, userInfo);
+      console.log("사용자 정보 수정 : ", data);
+      logout();
     };
 
     // ============== 회원 탈퇴 ================
@@ -77,6 +80,21 @@ export const useAuthStore = defineStore(
       console.log("회원탈퇴");
       logout();
     };
+
+    // ============== 모든 사용자 리스트 ================
+    const members = ref([]); //사용자 목록
+    const allUser = async () => {
+      const { data } = await axios.get(`/api/user`);
+      console.log("전체 회원 조회 : ", data);
+      getUser.value = data.articles;
+    };
+    // ============== 부분 사용자 조회 ================
+    const member = ref({});
+    const getUser = async (userId) => {
+      const { data } = await axios.get(`/api/user/${userId}`);
+      console.log(`회원(${userId}) 조회 : `, data);
+    };
+
     //-------------------------------------------------
 
     return {
@@ -91,6 +109,10 @@ export const useAuthStore = defineStore(
       isCheck,
       modify,
       deleteUser,
+      member,
+      members,
+      allUser,
+      getUser,
     };
   },
   //새로고침시 데이터 유지를 위한 설정(localStorage에 저장해서 불러오는 방식)

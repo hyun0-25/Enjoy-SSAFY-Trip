@@ -33,6 +33,7 @@ public class JWTUtil {
 		claims.put("role", member.getRole());
 		claims.put("email", member.getEmail());
 		claims.put("userType",member.getUserType());
+		claims.put("joinDate",member.getUserType());
 
 		return Jwts.builder()
 				.setHeader(header)

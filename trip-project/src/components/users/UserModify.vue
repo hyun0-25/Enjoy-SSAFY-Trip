@@ -2,7 +2,8 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/store/auth";
 import { useDate } from "vuetify";
-
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
 const authStore = useAuthStore();
 
 // 유저 정보
@@ -39,11 +40,11 @@ const dialog = ref(false);
 
 //정보 수정
 const modify = async () => {
+  console.log(userInfo.value.userId);
   try {
-    if (userInfo.userPassword == userInfo.againPassword) {
-      await authStore.modify(userInfo.value);
-      alert("재로그인 해주세요.");
-    }
+    await authStore.modify(userInfo.value);
+    alert("재로그인 해주세요.");
+    router.push("/");
   } catch (error) {
     console.log(userInfo.value);
     console.log("로그인 실패 에러:", error);

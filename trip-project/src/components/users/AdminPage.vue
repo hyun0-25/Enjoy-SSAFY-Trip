@@ -2,22 +2,21 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/store/auth";
 import UserModify from "./UserModify.vue";
+import { useRouter, useRoute } from "vue-router";
 const authStore = useAuthStore();
-
-const user = authStore.user.value;
-console.log(user);
-
-const cards = ["Today", "Yesterday"];
-const links = ["Dashboard", "Messages", "Profile", "Updates"];
+const router = useRouter();
 
 const linksA = [
-  ["mdi-account-multiple-minus", "전체 사용자 목록"],
-  ["mdi-send", "게시판"],
+  ["mdi-account-multiple-minus", "전체 사용자 목록", ""],
+  ["mdi-send", "게시판", "/board/notice"],
 ];
-const drawer = ref(null);
+const goDetail = (url) => {
+  router.push(url);
+};
 
 // 다이얼로그의 열림/닫힘 상태를 나타내는 데이터 속성
 const dialog = ref(false);
+const dialog2 = ref(false);
 </script>
 
 <template>
@@ -65,9 +64,8 @@ const dialog = ref(false);
                   </v-list-item>
                 </v-list>
               </v-col>
-              {{ user }}
             </v-row>
-            <div>가입일 : {{ authStore.user.email }}</div>
+            <div>가입일 : {{ authStore.user.registerDate }}</div>
           </v-sheet>
 
           <v-divider></v-divider>
@@ -76,32 +74,16 @@ const dialog = ref(false);
           <!-- 사이드 리스트 start-->
 
           <v-sheet rounded="lg">
-            <v-list>
+            <v-list rounded="lg">
               <v-list-item
-                v-for="[icon, text] in linksA"
+                v-for="[icon, text, url] in linksA"
                 :key="icon"
                 :prepend-icon="icon"
                 :title="text"
                 link
+                @click="goDetail(url)"
                 ><v-divider></v-divider>
               </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list rounded="lg">
-              <v-list-item
-                v-for="n in 5"
-                :key="n"
-                link
-                :title="`List Item ${n}`"
-              ></v-list-item>
-
-              <v-divider class="my-2"></v-divider>
-
-              <v-list-item
-                color="grey-lighten-4"
-                link
-                title="탈퇴하기"
-              ></v-list-item>
             </v-list>
           </v-sheet>
           <!-- 사이드 리스트 end-->
@@ -111,7 +93,6 @@ const dialog = ref(false);
         <v-col>
           <v-sheet min-height="70vh" rounded="lg">
             <!-- 본 -->
-            <p>test</p>
           </v-sheet>
         </v-col>
       </v-row>
