@@ -68,7 +68,8 @@ export const useBoardStore = defineStore("board", () => {
 
   /* =======게시글 수정 Start========== */
   const modifyArticle = async (modifyForm, formData) => {
-    console.log("modifyArticle() 요청 데이터:", modifyArticle);
+    console.log(modifyForm);
+    console.log("modifyArticle() 요청 데이터:", modifyForm);
     return await axios.put(
       `/api/board/${modifyForm.boardType}/${modifyForm.boardId}`,
       formData,
@@ -88,17 +89,39 @@ export const useBoardStore = defineStore("board", () => {
   };
   /* =======게시글 삭제 End========== */
 
+  /* =======좋아요 여부 Start========== */
+  const islike = ref(0);
+  const islikeArticle = async (boardType, boardLike) => {
+    console.log(boardLike);
+    const url = `/api/board/${boardType}/${boardLike.boardId}/like`;
+    console.log(url);
+    const { data } = await axios.get(url, { params: boardLike });
+    console.log(
+      `likeArticle(${boardType}, ${boardLike.boardId}) 요청 응답 - ${data}`
+    );
+    islike.value = data;
+  };
+  /* =======좋아요 여부 End========== */
+
   /* =======좋아요 등록 Start========== */
-  const likeArticel = async (boardType, boardId) => {
-    console.log(`likeArticel(${boardType}, ${boardId}) 요청 보냄`);
-    await axios.post(`/api/board/${boardType}/${boardId}/like`);
+  const likeArticle = async (boardType, boardLike) => {
+    console.log(`likeArticel(${boardType}, ${boardLike.boardId}) 요청 보냄`);
+    await axios.post(
+      `/api/board/${boardType}/${boardLike.boardId}/like`,
+      boardLike
+    );
   };
   /* =======좋아요 등록 End========== */
 
   /* =======좋아요 삭제 Start========== */
-  const deleteLikeArticel = async (boardType, boardId) => {
-    console.log(`deleteLikeArticel(${boardType}, ${boardId}) 요청 보냄`);
-    await axios.delete(`/api/board/${boardType}/${boardId}/like`);
+  const deleteLikeArticle = async (boardType, boardLike) => {
+    console.log(
+      `deleteLikeArticle(${boardType}, ${boardLike.boardId}) 요청 보냄`
+    );
+    const url = `/api/board/${boardType}/${boardLike.boardId}/like`;
+    console.log(url);
+    console.log(boardLike);
+    await axios.delete(url, { params: boardLike });
   };
   /* =======좋아요 삭제 End========== */
 
@@ -112,7 +135,9 @@ export const useBoardStore = defineStore("board", () => {
     deleteArticle,
     getModifyArticle,
     modifyarticle,
-    likeArticel,
-    deleteLikeArticel,
+    likeArticle,
+    deleteLikeArticle,
+    islikeArticle,
+    islike,
   };
 });

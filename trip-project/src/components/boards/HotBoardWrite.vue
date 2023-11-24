@@ -11,8 +11,10 @@ const writeForm = ref({
   userId: authStore.user.userId,
   title: "",
   content: "",
+  boardType: "hot",
 });
 const form = ref(null);
+const formData = new FormData();
 //등록 요청 보내고 등록 성공 시 목록 페이지 이동
 const write = async () => {
   const { valid } = await form.value.validate();
@@ -20,8 +22,22 @@ const write = async () => {
   if (valid) {
     try {
       if (!confirm("이대로 등록하시겠습니까?")) return;
-
-      await boardStore.writeArticle(writeForm.value);
+      var formData = new FormData();
+      for (let i = 0; i < file.value.length; i++) {
+        formData.append("files", file.value[i]);
+      }
+      if (file.value.length == 0) {
+        formData.append("files", file.value);
+      }
+      formData.append("title", writeForm.value.title);
+      formData.append("content", writeForm.value.content);
+      formData.append("boardType", writeForm.value.boardType);
+      formData.append("userId", writeForm.value.userId);
+      // for (let key of formData.keys()) {
+      //   console.log(key, ":", formData.get(key));
+      // }
+      await boardStore.writeArticle(formData);
+      // await boardStore.writeArticle(writeForm.value);
       router.push({ path: "/board/hot" });
       alert("등록 성공");
     } catch (error) {

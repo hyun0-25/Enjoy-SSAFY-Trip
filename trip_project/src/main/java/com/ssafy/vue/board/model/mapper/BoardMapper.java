@@ -58,4 +58,7 @@ public interface BoardMapper {
 	void deleteTotalLike(int boardId) throws Exception;
 
 	void deleteComment(int boardId) throws Exception;
+
+	Integer islikeArticle(BoardLikeDto boardLikeDto);
+
 }

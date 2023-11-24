@@ -92,7 +92,16 @@ const goDetail = (boardId) => {
           <td>{{ item.title }}</td>
           <td>{{ item.hit }}</td>
           <td>{{ item.registerDate }}</td>
-          <td>{{ item.totalLike }}</td>
+          <td>
+            {{ item.totalLike
+            }}<v-btn
+              size="small"
+              color="red"
+              variant="text"
+              icon="mdi-heart"
+              @click="like(card.boardId)"
+            ></v-btn>
+          </td>
         </tr>
       </template>
 

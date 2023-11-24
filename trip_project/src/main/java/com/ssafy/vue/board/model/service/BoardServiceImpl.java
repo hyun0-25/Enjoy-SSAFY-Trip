@@ -147,7 +147,10 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public void likeArticle(BoardLikeDto boardLikeDto) throws Exception {
+//		int result = boardMapper.islikeArticle(boardLikeDto);
+//		System.out.println(result);
 		int cnt = boardMapper.likeArticle(boardLikeDto);
+		System.out.println(cnt);
 		if(cnt==1) {
 			boardMapper.addTotalLike(boardLikeDto.getBoardId());
 		}
@@ -156,9 +159,17 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void deletelikeArticle(BoardLikeDto boardLikeDto) throws Exception {
 		int cnt = boardMapper.deletelikeArticle(boardLikeDto);
+		System.out.println(cnt);
 		if(cnt==1) {
 			boardMapper.deleteTotalLike(boardLikeDto.getBoardId());
 		}
 	}
+
+	@Override
+	public Integer islikeArticle(BoardLikeDto boardLikeDto) throws Exception {
+		return boardMapper.islikeArticle(boardLikeDto);
+	}
+
+
 
 }

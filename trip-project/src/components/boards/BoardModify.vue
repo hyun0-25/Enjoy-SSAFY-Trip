@@ -53,8 +53,8 @@ const modify = async () => {
       formData.append("title", modifyForm.value.title);
       formData.append("content", modifyForm.value.content);
       formData.append("boardId", modifyForm.value.boardId);
-      await boardStore.modifyArticle(modifyForm, formData);
-      router.push(`/board/detail/${modifyForm.value.boardId}`);
+      await boardStore.modifyArticle(modifyForm.value, formData);
+      router.push(`/board/hot/detail/${modifyForm.value.boardId}`);
       alert("수정 성공");
     } catch (error) {
       console.log("수정 에러 내용:", error);

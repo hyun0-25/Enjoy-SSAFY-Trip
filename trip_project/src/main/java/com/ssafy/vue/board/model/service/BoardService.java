@@ -28,4 +28,5 @@ public interface BoardService {
 	void deleteArticleComment(int commentId) throws Exception;
 	void likeArticle(BoardLikeDto boardLikeDto) throws Exception;
 	void deletelikeArticle(BoardLikeDto boardLikeDto) throws Exception;
+	Integer islikeArticle(BoardLikeDto boardLikeDto) throws Exception;
 }

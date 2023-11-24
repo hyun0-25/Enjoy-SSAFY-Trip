@@ -14,65 +14,76 @@ const params = ref({
 
 //목록 조회
 boardStore.getArticles(params.value, "contest");
+
+const imgview = (boardId) => {
+  const article = articles.value.filter((a) => a.boardId == boardId);
+  // console.log(article);
+  if (article[0].fileInfos[0] != null) {
+    const file = article[0].fileInfos[0];
+    // console.log(`http://localhost/images/${file.saveFile}`);
+    return `http://localhost/images/${file.saveFile}`;
+  }
+};
+
 //-----------contest end
 //---------- hot
-const articlesHot = computed(() => boardStore.articles);
+// const articlesHot = computed(() => boardStore.articles);
 
-const paramsHot = ref({
-  key: "", //조건 검색 시 컬럼명
-  word: "", //해당 컬럼에 일치하는 데이터
-});
-boardStore.getArticles(paramsHot.value, "hot");
+// const paramsHot = ref({
+//   key: "", //조건 검색 시 컬럼명
+//   word: "", //해당 컬럼에 일치하는 데이터
+// });
+// boardStore.getArticles(paramsHot.value, "hot");
 
 //---------- hot end
 
 //hot place 정보
-const hotPlaceInfo = ref([
-  {
-    imgScr: "https://picsum.photos/seed/picsum/300/200",
-    headline: "어딘가의 풍경",
-    subTitle: "가보고 싶다!",
-    text: "어디일까? 그곳은... Lorem ipsum dolor sit amet consectetur adipisicing elit.Eos natus perferendis impedit voluptates at temporibus suscipit,labore,iste inventore modi reiciendis earum et?Laboriosam fugit architecto commodi minima asperiores nam?Est eligendi repudiandae ipsam quia.Qui optio quos doloremque aliquid asperiores temporibus eligendi,vitae tempore placeat id delectus facere maxime animi,similique autem odit aliquam eveniet tenetur quaerat porro iure.Voluptate soluta ab,laborum porro nostrum expedita magnam optio corrupti in quas quis deleniti exercitationem voluptates dicta similique,delectus animi est dolore vitae atque!Iste perferendis odio dolores eaque nam!Fugit illo esse doloribus.Officiis nemo vel repudiandae,totam corrupti esse fugit,ut sunt consequuntur dolorem quo nihil quod inventore aperiam ad minima provident,consectetur blanditiis repellendus placeat perferendis facere?Dolorem veritatis dolor quam mollitia distinctio ipsa tenetur minus,error eum.Quaerat quidem beatae inventore fugiat voluptates id,quia necessitatibus,nisi excepturi reiciendis magnam,ab optio maxime assumenda culpa corrupti?Dicta nostrum reprehenderit sint facilis!Eos,impedit eligendi.Exercitationem facere voluptatum doloribus neque,voluptates atque velit sapiente at adipisci nemo reiciendis labore quibusdam eveniet perspiciatis consequuntur sint amet?Ipsum,esse?Ea eligendi qui aut temporibus,neque delectus autem sequi eveniet vero repellat amet ex officiis asperiores fugit placeat tempore quod quam ad porro deleniti molestias debitis atque optio!Earum,amet.Modi nobis eveniet,nostrum doloremque corrupti sapiente,repellat magnam adipisci perferendis consequuntur nulla repudiandae nihil praesentium!Deleniti,accusantium quidem culpa vero minus voluptas itaque reprehenderit?A nobis ratione ipsa sapiente.Neque,molestiae facere,nesciunt repudiandae doloremque,dolorum est vitae placeat corrupti eveniet deleniti similique rem aspernatur?Odio iure deserunt qui.Explicabo impedit nemo facere debitis quo nihil,earum voluptate voluptatibus.Harum,sequi illum.Dolor adipisci expedita impedit iure dolorem,facere quasi labore reprehenderit magni et!Possimus nesciunt aliquid omnis voluptatum quis nobis magnam,architecto temporibus,minus alias animi,aut exercitationem.",
-  },
+// const hotPlaceInfo = ref([
+//   {
+//     imgScr: "https://picsum.photos/seed/picsum/300/200",
+//     headline: "어딘가의 풍경",
+//     subTitle: "가보고 싶다!",
+//     text: "어디일까? 그곳은... Lorem ipsum dolor sit amet consectetur adipisicing elit.Eos natus perferendis impedit voluptates at temporibus suscipit,labore,iste inventore modi reiciendis earum et?Laboriosam fugit architecto commodi minima asperiores nam?Est eligendi repudiandae ipsam quia.Qui optio quos doloremque aliquid asperiores temporibus eligendi,vitae tempore placeat id delectus facere maxime animi,similique autem odit aliquam eveniet tenetur quaerat porro iure.Voluptate soluta ab,laborum porro nostrum expedita magnam optio corrupti in quas quis deleniti exercitationem voluptates dicta similique,delectus animi est dolore vitae atque!Iste perferendis odio dolores eaque nam!Fugit illo esse doloribus.Officiis nemo vel repudiandae,totam corrupti esse fugit,ut sunt consequuntur dolorem quo nihil quod inventore aperiam ad minima provident,consectetur blanditiis repellendus placeat perferendis facere?Dolorem veritatis dolor quam mollitia distinctio ipsa tenetur minus,error eum.Quaerat quidem beatae inventore fugiat voluptates id,quia necessitatibus,nisi excepturi reiciendis magnam,ab optio maxime assumenda culpa corrupti?Dicta nostrum reprehenderit sint facilis!Eos,impedit eligendi.Exercitationem facere voluptatum doloribus neque,voluptates atque velit sapiente at adipisci nemo reiciendis labore quibusdam eveniet perspiciatis consequuntur sint amet?Ipsum,esse?Ea eligendi qui aut temporibus,neque delectus autem sequi eveniet vero repellat amet ex officiis asperiores fugit placeat tempore quod quam ad porro deleniti molestias debitis atque optio!Earum,amet.Modi nobis eveniet,nostrum doloremque corrupti sapiente,repellat magnam adipisci perferendis consequuntur nulla repudiandae nihil praesentium!Deleniti,accusantium quidem culpa vero minus voluptas itaque reprehenderit?A nobis ratione ipsa sapiente.Neque,molestiae facere,nesciunt repudiandae doloremque,dolorum est vitae placeat corrupti eveniet deleniti similique rem aspernatur?Odio iure deserunt qui.Explicabo impedit nemo facere debitis quo nihil,earum voluptate voluptatibus.Harum,sequi illum.Dolor adipisci expedita impedit iure dolorem,facere quasi labore reprehenderit magni et!Possimus nesciunt aliquid omnis voluptatum quis nobis magnam,architecto temporibus,minus alias animi,aut exercitationem.",
+//   },
 
-  {
-    imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-    headline: "Top western road trips",
-    subTitle: "1,000 miles of wonder",
-    text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
-  },
-  {
-    imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-    headline: "Top western road trips",
-    subTitle: "1,000 miles of wonder",
-    text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
-  },
-  {
-    imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-    headline: "Top western road trips",
-    subTitle: "1,000 miles of wonder",
-    text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
-  },
-  {
-    imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-    headline: "Top western road trips",
-    subTitle: "1,000 miles of wonder",
-    text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
-  },
-]);
-const hpButtons = ref([]);
-watch(
-  hotPlaceInfo,
-  () => {
-    hpButtons.value = hotPlaceInfo.value.map(() => ({ show: false }));
-  },
+//   {
+//     imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
+//     headline: "Top western road trips",
+//     subTitle: "1,000 miles of wonder",
+//     text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
+//   },
+//   {
+//     imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
+//     headline: "Top western road trips",
+//     subTitle: "1,000 miles of wonder",
+//     text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
+//   },
+//   {
+//     imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
+//     headline: "Top western road trips",
+//     subTitle: "1,000 miles of wonder",
+//     text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
+//   },
+//   {
+//     imgScr: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
+//     headline: "Top western road trips",
+//     subTitle: "1,000 miles of wonder",
+//     text: "I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.",
+//   },
+// ]);
+// const hpButtons = ref([]);
+// watch(
+//   hotPlaceInfo,
+//   () => {
+//     hpButtons.value = hotPlaceInfo.value.map(() => ({ show: false }));
+//   },
 
-  ///////Hot Place 데이터 받아오면 지울 부분
-  {
-    immediate: true,
-  }
-  //////=============================
-);
+//   ///////Hot Place 데이터 받아오면 지울 부분
+//   {
+//     immediate: true,
+//   }
+//   //////=============================
+// );
 // hot place 열기,닫기 버튼---
 const toggleButton = (index) => {
   console.log("toggleButton:", index);
@@ -150,56 +161,6 @@ const newsDum = ref([
             </RouterLink>
           </v-carousel>
         </div>
-        <!-- MZ Hot Place -->
-        <h2>HOT PLACE</h2>
-        <div>
-          <v-layout row>
-            <!-- HOT PLACE start-->
-            <v-flex
-              xs12
-              sm6
-              offset-sm3
-              v-for="(item, index) in hotPlaceInfo"
-              :key="index"
-            >
-              <v-card>
-                <v-img
-                  :src="item.imgScr"
-                  height="200px"
-                  class="hoverable-image"
-                >
-                </v-img>
-
-                <v-card-title primary-title class="hoverable-image">
-                  <div>
-                    <div class="headline">{{ item.headline }}</div>
-                    <span class="grey--text">{{ item.subTitle }}</span>
-                  </div>
-                </v-card-title>
-
-                <v-card-actions class="hoverable-image">
-                  <v-btn flat>Share</v-btn>
-                  <v-btn flat color="purple">전체 보러가기</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn icon @click="toggleButton(index)">
-                    <v-icon>{{
-                      hpButtons[index].show
-                        ? "mdi mdi-chevron-up"
-                        : "mdi mdi-chevron-down"
-                    }}</v-icon>
-                  </v-btn>
-                </v-card-actions>
-
-                <v-slide-y-transition class="hoverable-image">
-                  <v-card-text v-show="hpButtons[index].show">
-                    {{ item.text }}
-                  </v-card-text>
-                </v-slide-y-transition>
-              </v-card>
-            </v-flex>
-            <!-- HOT PLACE end-->
-          </v-layout>
-        </div>
 
         <!-- hover 비율 바꾸기 -->
 
@@ -215,7 +176,7 @@ const newsDum = ref([
                 <v-card>
                   <!-- 콘테스트 사진 -->
                   <v-img
-                    :src="card.src"
+                    :src="imgview(card.boardId)"
                     class="align-end"
                     gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                     height="200px"
@@ -277,9 +238,9 @@ v-container {
 .image-col {
   flex: 1;
 }
-div {
+/* div {
   boarder: 20px;
-}
+} */
 .hoverable-image {
   transition: width 0.3s;
   min-width: 100px;

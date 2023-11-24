@@ -1,16 +1,23 @@
 <script setup>
 import { ref, computed } from "vue";
 import { RouterLink, useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
 //1.store 객체 얻어오기
 import { useBoardStore } from "../../store/board";
 const boardStore = useBoardStore();
 const router = useRouter();
+const authStore = useAuthStore();
 //2.반응형 데이터 연결하기
 const articles = computed(() => boardStore.articles);
 
 const params = ref({
   key: "", //조건 검색 시 컬럼명
   word: "", //해당 컬럼에 일치하는 데이터
+});
+
+const boardLike = ref({
+  userId: authStore.user.userId,
+  boardId: "",
 });
 
 //목록 조회
@@ -31,11 +38,20 @@ const goDetail = (boardId) => {
 };
 
 // 좋아요
-const good = ref(false);
-const like = (boardId) => {
-  good.value = !good.value;
-  if (good) boardStore.likeArticel("contest", boardId);
-  else boardStore.deleteLikeArticel("contest", boardId);
+const good = ref(0);
+
+const like = async (boardId) => {
+  // good.value = !good.value;
+  boardLike.value.boardId = boardId;
+  await boardStore.islikeArticle("contest", boardLike.value);
+  good.value = boardStore.islike;
+
+  console.log(good.value);
+  if (good.value == 0) boardStore.likeArticle("contest", boardLike.value);
+  else if (good.value == 1)
+    boardStore.deleteLikeArticle("contest", boardLike.value);
+
+  await boardStore.getArticles(params.value, "contest");
 };
 </script>
 
@@ -49,8 +65,13 @@ const like = (boardId) => {
     <v-container fluid>
       <v-row dense>
         <v-col v-for="card in articles" :key="card.title" :cols="4">
-          <v-card @click="goDetail(card.boardId)">
-            <v-img :src="imgview(card.boardId)" height="200px" cover>
+          <v-card>
+            <v-img
+              :src="imgview(card.boardId)"
+              height="200px"
+              cover
+              @click="goDetail(card.boardId)"
+            >
               <v-card-title
                 class="text-white"
                 v-text="card.title"
@@ -61,24 +82,21 @@ const like = (boardId) => {
               <v-spacer></v-spacer>
               <v-btn
                 size="small"
-                color="surface-variant"
+                color="red"
                 variant="text"
                 icon="mdi-heart"
-              ></v-btn>
-              <v-btn
-                size="small"
-                color="surface-variant"
-                variant="text"
-                icon="mdi-bookmark"
-              ></v-btn>
-              <v-btn
-                size="small"
-                color="surface-variant"
-                variant="text"
-                icon="mdi-thumb-up"
                 @click="like(card.boardId)"
-              ></v-btn>
-              {{ card.boardId }}
+              ></v-btn
+              >{{ card.totalLike }}
+
+              <img
+                width="24"
+                height="24"
+                style="margin: 0px 10px"
+                src="https://img.icons8.com/material-outlined/24/visible--v1.png"
+                alt="visible--v1"
+              />
+              {{ card.hit }}
             </v-card-actions>
           </v-card>
         </v-col>

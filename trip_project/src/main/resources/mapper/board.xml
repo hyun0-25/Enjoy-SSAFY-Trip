@@ -195,4 +195,16 @@
 		where board_id = #{boardId}
 	</update>
 	
+	<resultMap type="boardLikeDto" id="boardlike">
+		<result column="user_id" property="userId"/>
+		<result column="board_id" property="boardId"/>
+	</resultMap>
+	
+	<select id="islikeArticle" parameterType="boardLikeDto" resultType="int">
+		select count(*)
+		from `like`
+		where user_id=#{userId} and board_id=#{boardId};
+	</select>
+	
+	
 </mapper>

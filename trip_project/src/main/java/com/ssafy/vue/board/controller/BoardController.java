@@ -183,8 +183,16 @@ public class BoardController {
 		return ResponseEntity.ok().build();
 	}
 	
+	@ApiOperation(value = "게시판 좋아요 여부", notes = "글번호에 해당하는 게시글의 정보를 반환한다.", response = BoardDto.class)
+	@GetMapping("/{boardtype}/{boardid}/like")
+	public ResponseEntity<Integer> islikeArticle(
+			@ModelAttribute @ApiParam(value = "게시글 정보.", required = true) BoardLikeDto boardLikeDto)
+			throws Exception {
+		log.info("getArticle - 호출 : " + boardLikeDto);
+		return new ResponseEntity<Integer>(boardService.islikeArticle(boardLikeDto), HttpStatus.OK);
+	}
 	// 게시판 좋아요
-	@ApiOperation(value = "게시판 좋아요 등록", notes = "새로운 게시글 정보를 입력한다.")
+	@ApiOperation(value = "게시판 좋아요 등록", notes = "새로운 좋아요를 등록한다.")
 	@PostMapping("/{boardtype}/{boardid}/like")
 	public ResponseEntity<?> likeArticle(
 			@RequestBody @ApiParam(value = "게시글 정보.", required = true) BoardLikeDto boardLikeDto) {
@@ -197,10 +205,10 @@ public class BoardController {
 			return exceptionHandling(e);
 		}
 	}
-	@ApiOperation(value = "게시판 좋아요 취소", notes = "글번호에 해당하는 게시글의 정보를 삭제한다. 그리고 DB삭제 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
+	@ApiOperation(value = "게시판 좋아요 취소", notes = "글번호에 해당하는 좋아요 정보를 삭제한다. 그리고 DB삭제 성공여부에 따라 'success' 또는 'fail' 문자열을 반환한다.", response = String.class)
 	@DeleteMapping("/{boardtype}/{boardid}/like")
 	public ResponseEntity<String> deletelikeArticle(
-			@RequestBody @ApiParam(value = "좋아요 취소 게시글 정보.", required = true) BoardLikeDto boardLikeDto) throws Exception{
+			@ModelAttribute @ApiParam(value = "좋아요 취소 게시글 정보.", required = true) BoardLikeDto boardLikeDto) throws Exception{
 		log.info("deletelikeArticle - 호출");
 		boardService.deletelikeArticle(boardLikeDto);
 		return ResponseEntity.ok().build();

@@ -346,7 +346,7 @@ const addAllMyLocation = async () => {
   }
   try {
     await mylocationStore.addMyLocations(listForm.value);
-    router.push({ path: "/map" });
+    router.push({ path: "/user/mypage" });
   } catch (error) {
     console.log("등록 에러 내용:", error);
     alert("등록 실패");
@@ -384,11 +384,21 @@ const getSearchArticles = (searchKeyword) => {
     <div style="width: 20%" v-show="!isListOpen">
       <div>
         <TripSearchBar @search-event="getSearchArticles"></TripSearchBar>
-        <div>
-          <VSelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
-        </div>
-        <div>
-          <VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
+        <div style="display: flex">
+          <div style="width: 50%">
+            <VSelect
+              class="searchbar"
+              :selectOption="sidoList"
+              @onKeySelect="onChangeSido"
+            />
+          </div>
+          <div style="width: 50%">
+            <VSelect
+              class="searchbar"
+              :selectOption="gugunList"
+              @onKeySelect="onChangeGugun"
+            />
+          </div>
         </div>
       </div>
       <v-expand-x-transition>
@@ -469,7 +479,7 @@ const getSearchArticles = (searchKeyword) => {
             ></v-text-field>
           </v-col>
           <div>
-            <h5>{{ tripDateFormat }}</h5>
+            <h4>{{ tripDateFormat }}</h4>
             <v-btn @click="openModal" style="margin-bottom: 5px"
               >여행 일정 선택</v-btn
             >
@@ -656,8 +666,9 @@ const getSearchArticles = (searchKeyword) => {
   right: 0;
   transform: translateX(100%);
   z-index: 5;
-  background-color: rgba(241, 239, 239, 0.781);
+  background-color: rgba(255, 254, 254, 0.876);
   border-radius: 0px 20px 20px 0px;
+  border: thin solid #e8e7e7e8;
 }
 .slide {
   position: absolute;
@@ -667,5 +678,11 @@ const getSearchArticles = (searchKeyword) => {
   z-index: 3;
   border-radius: 20px;
   margin: 10px 0px 10px 10px;
+}
+
+.searchbar {
+  margin: 10px;
+  border: thin solid rgba(107, 106, 106, 0.47);
+  border-radius: 7px;
 }
 </style>

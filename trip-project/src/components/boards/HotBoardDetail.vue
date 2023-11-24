@@ -137,6 +137,26 @@ const previewFile = () => {
     );
   }
 };
+
+// 좋아요
+const good = ref(0);
+const boardLike = ref({
+  userId: authStore.user.userId,
+  boardId: "",
+});
+const like = async (boardId) => {
+  // good.value = !good.value;
+  boardLike.value.boardId = boardId;
+  await boardStore.islikeArticle("contest", boardLike.value);
+  good.value = boardStore.islike;
+
+  console.log(good.value);
+  if (good.value == 0) boardStore.likeArticle("contest", boardLike.value);
+  else if (good.value == 1)
+    boardStore.deleteLikeArticle("contest", boardLike.value);
+
+  await boardStore.getArticle(route.params.boardType, route.params.boardId);
+};
 </script>
 
 <template>
@@ -159,8 +179,17 @@ const previewFile = () => {
                 조회수 : {{ article.hit }}
               </div>
               <div style="width: 300px; margin-left: 100px; padding-top: 10px">
-                좋아요수 : {{ article.totalLike }}
+                좋아요수 : {{ article.totalLike
+                }}<v-btn
+                  size="big"
+                  color="red"
+                  variant="text"
+                  icon="mdi-heart"
+                  style="margin: 0px 20px"
+                  @click="like(article.boardId)"
+                ></v-btn>
               </div>
+
               <v-textarea
                 outlined
                 rows="13"
@@ -268,7 +297,7 @@ const previewFile = () => {
         <v-form ref="form" @submit.prevent="addComment">
           <v-list-item>
             <v-text-field
-              v-model="article.nickName"
+              v-model="authStore.user.userNickname"
               label="작성자"
               required
               readonly
